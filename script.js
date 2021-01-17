@@ -1,3 +1,31 @@
+$(document).ready(function () {
+
+    const simpleAuth = () => {
+
+        let password = prompt("Введите пароль");
+
+        let correct = false;
+
+        if (password == '123321') {
+
+            correct = true;
+
+            return;
+        } else {
+
+            while (!correct) {
+                let password = prompt("Введите пароль");
+
+                if (password == '123321') {
+                    correct = true;
+                }
+            }
+        }
+    }
+
+    simpleAuth();
+})
+
 ymaps.ready(init);
 
 function init() {
@@ -65,6 +93,6 @@ function init() {
         loader.classList.add('loaded');
     });
 
-    objectManager.objects.options.set('preset', 'islands#greenDotIcon');
-    objectManager.clusters.options.set('preset', 'islands#greenClusterIcons');
+    objectManager.objects.options.set('preset', 'islands#violetDotIcon');
+    objectManager.clusters.options.set('preset', 'islands#invertedVioletClusterIcons');
 }
