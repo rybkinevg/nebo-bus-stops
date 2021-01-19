@@ -1,66 +1,69 @@
-$(document).ready(function () {
-
-    const simpleAuth = () => {
-
-        let password = prompt("Введите пароль");
-
-        let correct = false;
-
-        if (password == '123321') {
-
-            correct = true;
-
-            return;
-        } else {
-
-            while (!correct) {
-                let password = prompt("Введите пароль");
-
-                if (password == '123321') {
-                    correct = true;
-                }
-            }
-        }
-    }
-
-    simpleAuth();
-})
-
 ymaps.ready(init);
 
 function init() {
-    var myMap = new ymaps.Map('map', {
-        center: [55.76, 37.64],
-        zoom: 10
-    }, {
-        searchControlProvider: 'yandex#search'
-    }),
-        objectManager = new ymaps.ObjectManager({
+    let myMap = new ymaps.Map(
+        'map',
+        {
+            center: [55.76, 37.64],
+            zoom: 10
+        },
+        {
+            searchControlProvider: 'yandex#search'
+        }
+    );
+
+    let listToAdd = [];
+
+    let customItemContentLayout = ymaps.templateLayoutFactory.createClass(
+        // Флаг "raw" означает, что данные вставляют "как есть" без экранирования html.
+        '<h2 class=ballon_header>{{ properties.balloonContentHeader|raw }}</h2>' +
+        '<div class=ballon_body>{{ properties.balloonContentBody|raw }}</div>' +
+        '<div class=ballon_footer><button class="btn-add" data-id="{{ properties.index }}">Добавить</button></div>', {
+
+        // Переопределяем функцию build, чтобы при создании макета начинать
+        // слушать событие click на кнопке-счетчике.
+        build: function () {
+            // Сначала вызываем метод build родительского класса.
+            customItemContentLayout.superclass.build.call(this);
+            // А затем выполняем дополнительные действия.
+            $('.btn-add').bind('click', this.onCounterClick);
+        },
+
+        // Аналогично переопределяем функцию clear, чтобы снять
+        // прослушивание клика при удалении макета с карты.
+        clear: function () {
+            // Выполняем действия в обратном порядке - сначала снимаем слушателя,
+            // а потом вызываем метод clear родительского класса.
+            $('.btn-add').unbind('click', this.onCounterClick);
+            customItemContentLayout.superclass.clear.call(this);
+        },
+
+        onCounterClick: function () {
+            if ($.inArray($(this).data("id"), listToAdd) == -1) {
+                listToAdd.push($(this).data("id"));
+            }
+            console.log(listToAdd);
+        }
+    });
+
+    let objectManager = new ymaps.ObjectManager(
+        {
             clusterize: true,
-            gridSize: 202,
-            clusterDisableClickZoom: false
-        });
-
-    const ballonBody = (area, district, street, direction, near_address, place_name, approve_id, type, format, price_nds, latitude, longitude) => {
-        return `
-            <p><strong>Округ</strong> - ${area}</p>
-            <p><strong>Район</strong> - ${district}</p>
-            <hr />
-            <p><strong>Название улицы</strong> - ${street}</p>
-            <p><strong>Направление</strong> - ${direction}</p>
-            <p><strong>Ближайший адрес</strong> - ${near_address}</p>
-            <p><strong>Название остановки</strong> - ${place_name}</p>
-            <hr />
-            <p><strong>№ разрешения</strong> - ${approve_id}</p>
-            <hr />
-            <p><strong>Тип</strong> - ${type}</p>
-            <p><strong>Формат</strong> - ${format}</p>
-            <p><strong>Цена с НДС</strong> - ${price_nds}</p>
-            <hr />
-            <p><strong>Координаты (широта, долгота)</strong> - ${latitude}, ${longitude}</p>
-
-        `;
-    }
+            gridSize: 100,
+            clusterDisableClickZoom: false,
+            clusterOpenBalloonOnClick: true,
+            clusterIconLayout: 'default#pieChart',
+            // Устанавливаем режим открытия балуна. 
+            // В данном примере балун никогда не будет открываться в режиме панели.
+            clusterBalloonPanelMaxMapArea: 0,
+            // Устанавливаем размер макета контента балуна (в пикселях).
+            clusterBalloonContentLayoutWidth: 550,
+            // Устанавливаем собственный макет.
+            clusterBalloonItemContentLayout: customItemContentLayout,
+            // Устанавливаем ширину левой колонки, в которой располагается список всех геообъектов кластера.
+            clusterBalloonLeftColumnWidth: 100
+        }
+    );
 
     $.ajax({
         url: "places.json"
@@ -68,7 +71,7 @@ function init() {
 
         const loader = document.querySelector('.loader');
 
-        data.places.forEach(el => {
+        data.places.forEach((el, index) => {
             if (el.latitude && el.longitude) {
                 objectManager.add({
                     type: 'Feature',
@@ -78,21 +81,41 @@ function init() {
                         coordinates: [el.latitude, el.longitude]
                     },
                     properties: {
-                        balloonContentHeader: el.address_place,
-                        balloonContentBody: ballonBody(el.area, el.district, el.street, el.direction, el.near_address, el.place_name, el.approve_id, el.type, el.format, el.price_nds, el.latitude, el.longitude),
-                        balloonContentFooter: `Номер в таблице: ${el.id}`,
-                        clusterCaption: `${el.iid} <strong>${el.side}</strong>`,
-                        hintContent: el.gid,
+                        balloonContentHeader: el.gid,
+                        balloonContentBody: el.address,
+                        index: index,
+                    },
+                    options: {
+                        preset: "islands#violetDotIcon"
                     }
                 });
             }
         });
 
+        if (typeof uploadedPoints !== 'undefined') {
+            uploadedPoints.forEach((el) => {
+                if (el.latitude && el.longitude) {
+                    objectManager.add({
+                        type: 'Feature',
+                        id: el.id,
+                        geometry: {
+                            type: 'Point',
+                            coordinates: [el.latitude, el.longitude]
+                        },
+                        properties: {
+                            balloonContentHeader: '12333',
+                            balloonContentBody: 'dsad'
+                        },
+                        options: {
+                            preset: "islands#blueDotIcon"
+                        }
+                    });
+                }
+            });
+        }
+
         myMap.geoObjects.add(objectManager);
 
         loader.classList.add('loaded');
     });
-
-    objectManager.objects.options.set('preset', 'islands#violetDotIcon');
-    objectManager.clusters.options.set('preset', 'islands#invertedVioletClusterIcons');
 }

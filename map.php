@@ -1,15 +1,25 @@
+<?php
+
+$file = ($_GET['file']) ? $_GET['file'] : false;
+
+?>
+
 <!DOCTYPE html>
 <html>
 
 <head>
     <title>Интерактивный помощник по остановкам</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <script src="https://api-maps.yandex.ru/2.1/?lang=ru-RU&apikey=5571489d-8573-4ab6-8f61-558fd0453a57"
-        type="text/javascript"></script>
-    <script async src="https://yandex.st/jquery/2.2.3/jquery.min.js" type="text/javascript"></script>
-    <script async src="./script.js" type="text/javascript"></script>
     <link rel="stylesheet" href="./style.css">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <?php
+
+    if ($file) {
+
+        include('./includes/exel-array-to-js.php');
+    }
+
+    ?>
 </head>
 
 <body class="body">
@@ -17,6 +27,9 @@
         <h1 class="loader__text">Загрузка меток на карте, пожалуйста, подождите</h1>
     </div>
     <div id="map"></div>
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru-RU&apikey=5571489d-8573-4ab6-8f61-558fd0453a57" type="text/javascript"></script>
+    <script async src="https://yandex.st/jquery/2.2.3/jquery.min.js" type="text/javascript"></script>
+    <script async src="./script.js" type="text/javascript"></script>
 </body>
 
 </html>
