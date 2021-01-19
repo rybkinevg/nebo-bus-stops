@@ -1,13 +1,53 @@
+<?php
+
+require('SimpleXLSX.php');
+
+$file_path = './files/' . $file;
+
+?>
+
 <script>
-    const uploadedPoints = [{
-            id: 'test1',
-            latitude: '55.791668',
-            longitude: '37.583391'
-        },
-        {
-            id: 'test2',
-            latitude: '55.791668',
-            longitude: '37.583391'
-        }
-    ];
+    <?php
+
+    if ($xlsx = SimpleXLSX::parse($file_path)) {
+
+        $rows = $xlsx->rows();
+
+    ?>
+
+        const uploadedPoints = [
+
+            <?php
+
+            for ($i = 1; $i != count($rows); $i++) {
+
+            ?>
+
+                {
+                    id: <?= "'" . $rows[$i][0] . "'" ?>,
+                    latitude: <?= $rows[$i][1] ?>,
+                    longitude: <?= $rows[$i][2] ?>,
+                },
+
+            <?php
+
+            }
+
+            ?>
+
+        ];
+
+    <?php
+
+    } else {
+
+    ?>
+
+        console.log(<?= SimpleXLSX::parseError() ?>);
+
+    <?php
+
+    }
+
+    ?>
 </script>

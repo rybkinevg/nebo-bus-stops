@@ -7,6 +7,10 @@ body,
     margin: 0;
 }
 
+button {
+    cursor: pointer;
+}
+
 a {
     color: #04b;
     /* Цвет ссылки */
@@ -54,4 +58,70 @@ a:hover {
 .loader__text::after {
     content: url(./spinner.gif);
     margin-left: 30px;
+}
+
+.container {
+    display: flex;
+}
+
+.nav {
+    height: 100vh;
+    min-height: 400px;
+}
+
+#map {
+    width: 100%;
+    height: 100vh;
+    min-height: 400px;
+}
+
+.modals {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+}
+
+.modals .modal {
+    display: none;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal__inner {
+    position: relative;
+    min-height: 400px;
+    min-width: 400px;
+    padding: 30px;
+    background-color: #fff;
+}
+
+.js-modal-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    background: #000;
+    color: #fff;
+    border: none;
+}
+
+.modals.--open {
+    display: block;
+}
+
+.modal.--open {
+    display: flex;
+}
+
+#upload-form {
+    margin-bottom: 30px;
 }

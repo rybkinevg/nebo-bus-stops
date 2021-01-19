@@ -39,8 +39,11 @@ function init() {
         },
 
         onCounterClick: function () {
-            if ($.inArray($(this).data("id"), listToAdd) == -1) {
-                listToAdd.push($(this).data("id"));
+
+            let id = $(this).data("id");
+
+            if ($.inArray(id++, listToAdd) == -1 && id != 'none') {
+                listToAdd.push(id++);
             }
             console.log(listToAdd);
         }
@@ -53,7 +56,7 @@ function init() {
             clusterDisableClickZoom: false,
             clusterOpenBalloonOnClick: true,
             clusterIconLayout: 'default#pieChart',
-            // Устанавливаем режим открытия балуна. 
+            // Устанавливаем режим открытия балуна.
             // В данном примере балун никогда не будет открываться в режиме панели.
             clusterBalloonPanelMaxMapArea: 0,
             // Устанавливаем размер макета контента балуна (в пикселях).
@@ -81,9 +84,10 @@ function init() {
                         coordinates: [el.latitude, el.longitude]
                     },
                     properties: {
-                        balloonContentHeader: el.gid,
-                        balloonContentBody: el.address,
+                        balloonContentHeader: `Остановка ${el.iid} ${el.side}`,
+                        balloonContentBody: `<p>ГИД: ${el.gid}</p><p>Адрес: ${(el.near_address) ? el.near_address : 'Не указан'}</p><p>Сторона: ${el.side}</p><p>Прайс (с НДС): ${el.price_nds}</p>`,
                         index: index,
+                        clusterCaption: `Сторона ${el.side}`
                     },
                     options: {
                         preset: "islands#violetDotIcon"
@@ -94,6 +98,7 @@ function init() {
 
         if (typeof uploadedPoints !== 'undefined') {
             uploadedPoints.forEach((el) => {
+                console.log(el);
                 if (el.latitude && el.longitude) {
                     objectManager.add({
                         type: 'Feature',
@@ -103,8 +108,10 @@ function init() {
                             coordinates: [el.latitude, el.longitude]
                         },
                         properties: {
-                            balloonContentHeader: '12333',
-                            balloonContentBody: 'dsad'
+                            balloonContentHeader: 'Импортированная остановка',
+                            balloonContentBody: 'Данная остановка была импортирована через "Добавить метки", кнопка "Добавить" внутри этой карточки не будет добавлять остановку в очередь.',
+                            index: 'none',
+                            clusterCaption: 'Остановка'
                         },
                         options: {
                             preset: "islands#blueDotIcon"
@@ -117,5 +124,124 @@ function init() {
         myMap.geoObjects.add(objectManager);
 
         loader.classList.add('loaded');
+    });
+
+
+    // Модалки
+
+    const btnModal = $('.js-modal-trigger');
+    const btnModalclose = $('.js-modal-close');
+
+    btnModal.on('click', function () {
+
+        let modalID = $(this).data('modal');
+        let modals = $('.modal');
+
+        modals.each(function (el) {
+
+            if ($(modals[el]).hasClass(`modal-${modalID}`)) {
+                $(modals[el]).addClass('--open');
+                $('.modals').addClass('--open');
+            }
+        });
+    });
+
+    btnModalclose.on('click', function () {
+
+        $(this).parent().parent().removeClass('--open').parent().removeClass('--open');
+    });
+
+    // Форма загрузки
+
+    const uploadForm = $('#upload-form');
+    const uploadFile = $('#upload-file');
+    const uploadBtn = $('#upload-submit');
+
+    $(uploadFile).change(function () {
+        if ($(this).val()) {
+            $(uploadBtn).removeAttr('disabled');
+        }
+        else {
+            $(uploadBtn).attr('disabled', true);
+        }
+    });
+
+    $(uploadForm).on('submit', function (event) {
+
+        event.preventDefault();
+
+        $(uploadBtn).attr('disabled', true);
+        //jQuery(importButtonLoader).removeClass('disabled');
+
+        $.ajax({
+            url: './includes/upload.php',
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            data: new FormData(document.getElementById('upload-form')),
+            success: function (respond, status, jqXHR) {
+                if (respond) {
+
+                    $(uploadFile).attr('disabled', true);
+
+                    //jQuery(importButtonLoader).addClass('disabled');
+
+                    $(uploadForm).parent().append(`<div class="upload-response"><a href=${respond}>Обновить карту</a></div>`);
+                }
+            },
+            error: function (jqXHR, status, errorThrown) {
+                console.log('Ошибка AJAX запроса: ' + status);
+            }
+        });
+    });
+
+    // Форма скачивания
+
+    const btnUpdate = $('.js-download-update');
+    const btnDownload = $('.js-download-submit');
+    const downloadList = $('.download-list');
+
+    function appendListItems(list) {
+        let output = '';
+
+        list.forEach((el) => {
+            output += `<li>${el}</li>`;
+        });
+
+        return output;
+    }
+
+    btnUpdate.on('click', function () {
+        if (listToAdd.length > 0) {
+            $(downloadList).html(appendListItems(listToAdd));
+            $(btnDownload).removeAttr('disabled');
+        }
+    });
+
+    $(btnDownload).on('click', function () {
+
+        $(btnDownload).attr('disabled', true);
+        //jQuery(importButtonLoader).removeClass('disabled');
+
+        $.ajax({
+            url: './includes/download.php',
+            type: 'GET',
+            contentType: false,
+            processData: false,
+            data: 'ids=' + listToAdd,
+            success: function (respond, status, jqXHR) {
+                if (respond) {
+
+                    console.log('respond', respond);
+
+                    //jQuery(importButtonLoader).addClass('disabled');
+
+                    //$(downloadForm).parent().append(`<div class="upload-response"><a href=${respond}>Обновить карту</a></div>`);
+                }
+            },
+            error: function (jqXHR, status, errorThrown) {
+                console.log('Ошибка AJAX запроса: ' + status);
+            }
+        });
     });
 }
