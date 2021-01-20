@@ -1,16 +1,14 @@
 <?php
 
+require_once('./includes/classes/db.php');
+
 $servername = "localhost";
-$database   = "nebo-bus-stops";
+$dbname   = "test-db";
 $username   = "root";
 $password   = "root";
+$tablename   = "test-import-table";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+$db = new db($servername, $username, $password, $dbname);
 
 $keys = [
     'ID'         => [
@@ -23,7 +21,7 @@ $keys = [
         'null'     => 'NOT NULL',
         'index'    => '',
         'AI'       => 'AUTO_INCREMENT',
-        'primary'  => 'PRIMARY_KEY'
+        'primary'  => 'PRIMARY KEY'
     ],
     'side'         => [
         'name'     => 'Сторона',
@@ -33,7 +31,9 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NOT NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'invent_id'    => [
         'name'     => 'Инвентарный номер',
@@ -43,7 +43,9 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NOT NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'g_id'    => [
         'name'     => 'Код',
@@ -53,7 +55,9 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NOT NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'district'    => [
         'name'     => 'Район',
@@ -63,7 +67,9 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NOT NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'area'    => [
         'name'     => 'Округ',
@@ -73,17 +79,21 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NOT NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'map_link'    => [
-        'name'     => 'Яндекс.Карты',
+        'name'     => 'Яндекс.Карта',
         'type'     => 'VARCHAR',
         'length'   => '200',
         'default'  => '',
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'panorama_link'    => [
         'name'     => 'Панорама',
@@ -93,7 +103,9 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'photo'    => [
         'name'     => 'Фото',
@@ -103,9 +115,11 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
-    'schema'    => [
+    'map_schema'    => [
         'name'     => 'Схема',
         'type'     => 'VARCHAR',
         'length'   => '200',
@@ -113,17 +127,21 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
-    'GPR'    => [
-        'name'     => 'GPR',
+    'GRP'    => [
+        'name'     => 'GRP',
         'type'     => 'VARCHAR',
         'length'   => '30',
         'default'  => '',
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'OTS'    => [
         'name'     => 'OTS',
@@ -133,7 +151,9 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'espar_id'    => [
         'name'     => 'Код Эспар',
@@ -143,7 +163,9 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'street'    => [
         'name'     => 'Улица',
@@ -153,7 +175,9 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'direction'    => [
         'name'     => 'Направление',
@@ -163,17 +187,21 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'address_near'    => [
-        'name'     => 'Ближайший адрес',
+        'name'     => 'Адрес ближайшего строения',
         'type'     => 'VARCHAR',
         'length'   => '200',
         'default'  => '',
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'busstop_name'    => [
         'name'     => 'Наименование остановки',
@@ -183,7 +211,9 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'latitude'    => [
         'name'     => 'Широта',
@@ -193,7 +223,9 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => '',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'longitude'    => [
         'name'     => 'Долгота',
@@ -203,17 +235,21 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => '',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'approve_id'    => [
-        'name'     => 'Номер разрешения',
+        'name'     => '№ разрешения',
         'type'     => 'VARCHAR',
-        'length'   => '30',
+        'length'   => '100',
         'default'  => '',
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'type'    => [
         'name'     => 'Тип павильона',
@@ -223,7 +259,9 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'format'    => [
         'name'     => 'Формат',
@@ -233,7 +271,9 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'nds_rate'    => [
         'name'     => 'Тариф с НДС',
@@ -243,7 +283,9 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'choose'    => [
         'name'     => 'Выбор',
@@ -253,7 +295,9 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ],
     'rate'    => [
         'name'     => 'Тариф с учетом пакета с НДС',
@@ -263,9 +307,16 @@ $keys = [
         'encoding' => '',
         'attr'     => '',
         'null'     => 'NULL',
-        'index'    => ''
+        'index'    => '',
+        'AI'       => '',
+        'primary'  => ''
     ]
 ];
+
+foreach ($keys as $key) {
+
+    $keys_titles[] = $key['name'];
+}
 
 function generate_keys_query($keys)
 {
@@ -273,7 +324,7 @@ function generate_keys_query($keys)
 
     foreach ($keys as $key => $value) {
 
-        $output .= $key;
+        $output .= $key . ' ';
 
         foreach ($value as $k => $v) {
 
@@ -315,23 +366,54 @@ function generate_keys_query($keys)
                     $primary = ($v) ? $v : '';
                     break;
             }
-
-            $output .= "|{$type}{$length}{$default}{$encoding}{$attr}{$null}{$index}{$AI}{$primary},";
         }
+
+        $output .= trim("{$type}{$length} {$default} {$encoding} {$attr} {$null} {$index} {$AI} {$primary}") . ', ';
     }
 
-    return $output;
+    return mb_substr($output, 0, -2);
 };
 
-// sql to create table
-$sql = "CREATE TABLE busstops (" . generate_keys_query($keys) . ")";
+//$db->create($tablename, generate_keys_query($keys));
 
-echo ($sql);
+$db->check_cols($tablename);
 
-// if ($conn->query($sql) === TRUE) {
-//     echo "Table MyGuests created successfully";
-// } else {
-//     echo "Error creating table: " . $conn->error;
-// }
+require_once('./includes/vendor/SimpleXLSX.php');
 
-$conn->close();
+$file_path = 'd.xlsx';
+
+if ($xlsx = SimpleXLSX::parse($file_path)) {
+
+    $table = $xlsx->rows();
+
+    for ($i = 0; $i < count($table); $i++) {
+
+        if ($i == 0) {
+
+            $titles = $table[$i];
+        } else {
+
+            $data = '';
+
+            // TODO: сопоставить порядок ключей, чтобы не произошло такого,
+            // что они перемешаются, например, ключ - side в БД занимает второе место
+            // а в таблице с заголовками будет занимать 5ое место, всё сломается
+            foreach ($titles as $key => $value) {
+
+                if (in_array($value, $keys_titles)) {
+
+                    $cell = (!empty($table[$i][$key])) ? "'{$table[$i][$key]}', " : "'NULL', ";
+
+                    $data .= $cell;
+                }
+            }
+
+            $clear_data = mb_substr($data, 0, -2);
+
+            $db->insert($tablename, "NULL, {$clear_data}");
+        }
+    }
+} else {
+
+    echo SimpleXLSX::parseError();
+}

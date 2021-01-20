@@ -53,7 +53,7 @@ function init() {
         {
             clusterize: true,
             gridSize: 100,
-            clusterDisableClickZoom: false,
+            clusterDisableClickZoom: true,
             clusterOpenBalloonOnClick: true,
             clusterIconLayout: 'default#pieChart',
             // Устанавливаем режим открытия балуна.
@@ -96,30 +96,30 @@ function init() {
             }
         });
 
-        if (typeof uploadedPoints !== 'undefined') {
-            uploadedPoints.forEach((el) => {
-                console.log(el);
-                if (el.latitude && el.longitude) {
-                    objectManager.add({
-                        type: 'Feature',
-                        id: el.id,
-                        geometry: {
-                            type: 'Point',
-                            coordinates: [el.latitude, el.longitude]
-                        },
-                        properties: {
-                            balloonContentHeader: 'Импортированная остановка',
-                            balloonContentBody: 'Данная остановка была импортирована через "Добавить метки", кнопка "Добавить" внутри этой карточки не будет добавлять остановку в очередь.',
-                            index: 'none',
-                            clusterCaption: 'Остановка'
-                        },
-                        options: {
-                            preset: "islands#blueDotIcon"
-                        }
-                    });
-                }
-            });
-        }
+        // if (typeof uploadedPoints !== 'undefined') {
+        //     uploadedPoints.forEach((el) => {
+        //         console.log(el);
+        //         if (el.latitude && el.longitude) {
+        //             objectManager.add({
+        //                 type: 'Feature',
+        //                 id: el.id,
+        //                 geometry: {
+        //                     type: 'Point',
+        //                     coordinates: [el.latitude, el.longitude]
+        //                 },
+        //                 properties: {
+        //                     balloonContentHeader: 'Импортированная остановка',
+        //                     balloonContentBody: 'Данная остановка была импортирована через "Добавить метки", кнопка "Добавить" внутри этой карточки не будет добавлять остановку в очередь.',
+        //                     index: 'none',
+        //                     clusterCaption: 'Остановка'
+        //                 },
+        //                 options: {
+        //                     preset: "islands#blueDotIcon"
+        //                 }
+        //             });
+        //         }
+        //     });
+        // }
 
         myMap.geoObjects.add(objectManager);
 
