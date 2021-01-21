@@ -1,6 +1,6 @@
 <?php
 
-$uploaddir = $_SERVER['DOCUMENT_ROOT'] . './files/';
+$uploaddir = $_SERVER['DOCUMENT_ROOT'] . './files/map_imports/';
 
 $uploadfile = $uploaddir . basename($_FILES['upload-file']['name']);
 

@@ -18,7 +18,7 @@ function init() {
         // Флаг "raw" означает, что данные вставляют "как есть" без экранирования html.
         '<h2 class=ballon_header>{{ properties.balloonContentHeader|raw }}</h2>' +
         '<div class=ballon_body>{{ properties.balloonContentBody|raw }}</div>' +
-        '<div class=ballon_footer><button class="btn-add" data-id="{{ properties.index }}">Добавить</button></div>', {
+        '<div class=ballon_footer><button class="btn-add" data-id="{{ properties.index }}" {{ properties.disabled }}>Добавить</button></div>', {
 
         // Переопределяем функцию build, чтобы при создании макета начинать
         // слушать событие click на кнопке-счетчике.
@@ -42,10 +42,15 @@ function init() {
 
             let id = $(this).data("id");
 
-            if ($.inArray(id++, listToAdd) == -1 && id != 'none') {
-                listToAdd.push(id++);
+            if ($.inArray(id, listToAdd) == -1 && id != 'none') {
+
+                listToAdd.push(id);
             }
-            console.log(listToAdd);
+
+            $(this).attr('disabled', true);
+            $(this).text('Добавлено');
+
+            console.log('Добавленные точки', listToAdd);
         }
     });
 
@@ -64,17 +69,37 @@ function init() {
             // Устанавливаем собственный макет.
             clusterBalloonItemContentLayout: customItemContentLayout,
             // Устанавливаем ширину левой колонки, в которой располагается список всех геообъектов кластера.
-            clusterBalloonLeftColumnWidth: 100
+            clusterBalloonLeftColumnWidth: 130
         }
     );
 
-    $.ajax({
-        url: "places.json"
-    }).done(function (data) {
+    const loader = document.querySelector('.loader');
 
-        const loader = document.querySelector('.loader');
+    dbPoints.forEach((el) => {
+        if (el.latitude != 'NULL' && el.longitude != 'NULL') {
+            objectManager.add({
+                type: 'Feature',
+                id: el.ID,
+                geometry: {
+                    type: 'Point',
+                    coordinates: [el.latitude, el.longitude]
+                },
+                properties: {
+                    balloonContentHeader: `Остановка ${el.invent_id} <b>${el.side}</b>`,
+                    balloonContentBody: `<p>ГИД: ${el.g_id}</p><p>Адрес: ${(el.address_near != 'NULL') ? el.address_near : 'Не указан'}</p><p>Сторона: ${el.side}</p><p>Прайс (с НДС): ${el.nds_rate}</p>`,
+                    index: el.ID,
+                    disabled: '',
+                    clusterCaption: `${el.invent_id} <b>${el.side}</b>`
+                },
+                options: {
+                    preset: "islands#violetDotIcon"
+                }
+            });
+        }
+    });
 
-        data.places.forEach((el, index) => {
+    if (typeof uploadedPoints !== 'undefined') {
+        uploadedPoints.forEach((el) => {
             if (el.latitude && el.longitude) {
                 objectManager.add({
                     type: 'Feature',
@@ -84,48 +109,35 @@ function init() {
                         coordinates: [el.latitude, el.longitude]
                     },
                     properties: {
-                        balloonContentHeader: `Остановка ${el.iid} ${el.side}`,
-                        balloonContentBody: `<p>ГИД: ${el.gid}</p><p>Адрес: ${(el.near_address) ? el.near_address : 'Не указан'}</p><p>Сторона: ${el.side}</p><p>Прайс (с НДС): ${el.price_nds}</p>`,
-                        index: index,
-                        clusterCaption: `Сторона ${el.side}`
+                        balloonContentHeader: 'Импортированная остановка',
+                        balloonContentBody: 'Данная остановка была импортирована через "Добавить метки", кнопка "Добавить" внутри этой карточки не будет добавлять остановку в очередь.',
+                        index: 'none',
+                        disabled: 'disabled',
+                        clusterCaption: 'Остановка'
                     },
                     options: {
-                        preset: "islands#violetDotIcon"
+                        preset: "islands#blueDotIcon"
                     }
                 });
             }
         });
+    }
 
-        // if (typeof uploadedPoints !== 'undefined') {
-        //     uploadedPoints.forEach((el) => {
-        //         console.log(el);
-        //         if (el.latitude && el.longitude) {
-        //             objectManager.add({
-        //                 type: 'Feature',
-        //                 id: el.id,
-        //                 geometry: {
-        //                     type: 'Point',
-        //                     coordinates: [el.latitude, el.longitude]
-        //                 },
-        //                 properties: {
-        //                     balloonContentHeader: 'Импортированная остановка',
-        //                     balloonContentBody: 'Данная остановка была импортирована через "Добавить метки", кнопка "Добавить" внутри этой карточки не будет добавлять остановку в очередь.',
-        //                     index: 'none',
-        //                     clusterCaption: 'Остановка'
-        //                 },
-        //                 options: {
-        //                     preset: "islands#blueDotIcon"
-        //                 }
-        //             });
-        //         }
-        //     });
-        // }
+    myMap.geoObjects.add(objectManager);
 
-        myMap.geoObjects.add(objectManager);
+    loader.classList.add('loaded');
 
-        loader.classList.add('loaded');
-    });
+    // Геокодер
 
+    // $.getJSON('https://geocode-maps.yandex.ru/1.x/?', {
+    //     format: 'json',
+    //     apikey: '5571489d-8573-4ab6-8f61-558fd0453a57',
+    //     geocode: 'Россия, Москва, улица Барышиха, 30'
+    // }).done(
+    //     function (data) {
+    //         console.log(data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos);
+    //     }
+    // );
 
     // Модалки
 
@@ -213,35 +225,25 @@ function init() {
 
     btnUpdate.on('click', function () {
         if (listToAdd.length > 0) {
+
             $(downloadList).html(appendListItems(listToAdd));
-            $(btnDownload).removeAttr('disabled');
-        }
-    });
 
-    $(btnDownload).on('click', function () {
+            $.ajax({
+                url: './includes/download.php',
+                type: 'GET',
+                contentType: false,
+                processData: false,
+                data: 'ids=' + listToAdd,
+                success: function (respond, status, jqXHR) {
+                    if (respond) {
 
-        $(btnDownload).attr('disabled', true);
-        //jQuery(importButtonLoader).removeClass('disabled');
-
-        $.ajax({
-            url: './includes/download.php',
-            type: 'GET',
-            contentType: false,
-            processData: false,
-            data: 'ids=' + listToAdd,
-            success: function (respond, status, jqXHR) {
-                if (respond) {
-
-                    console.log('respond', respond);
-
-                    //jQuery(importButtonLoader).addClass('disabled');
-
-                    //$(downloadForm).parent().append(`<div class="upload-response"><a href=${respond}>Обновить карту</a></div>`);
+                        $(btnUpdate).next($('.download-link-wrapper')).html(respond);
+                    }
+                },
+                error: function (jqXHR, status, errorThrown) {
+                    console.log('Ошибка AJAX запроса: ' + status);
                 }
-            },
-            error: function (jqXHR, status, errorThrown) {
-                console.log('Ошибка AJAX запроса: ' + status);
-            }
-        });
+            });
+        }
     });
 }

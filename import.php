@@ -1,14 +1,11 @@
 <?php
 
-require_once('./includes/classes/db.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/config.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/db.php');
 
-$servername = "localhost";
-$dbname   = "test-db";
-$username   = "root";
-$password   = "root";
+$db = new db(HOST, USER, PASSWORD, DB_NAME);
+
 $tablename   = "test-import-table";
-
-$db = new db($servername, $username, $password, $dbname);
 
 $keys = [
     'ID'         => [
@@ -374,13 +371,13 @@ function generate_keys_query($keys)
     return mb_substr($output, 0, -2);
 };
 
-//$db->create($tablename, generate_keys_query($keys));
+$db->create($tablename, generate_keys_query($keys));
 
 $db->check_cols($tablename);
 
-require_once('./includes/vendor/SimpleXLSX.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/vendor/SimpleXLSX.php');
 
-$file_path = 'd.xlsx';
+$file_path = './files/db_imports/database.xlsx';
 
 if ($xlsx = SimpleXLSX::parse($file_path)) {
 
@@ -402,7 +399,21 @@ if ($xlsx = SimpleXLSX::parse($file_path)) {
 
                 if (in_array($value, $keys_titles)) {
 
-                    $cell = (!empty($table[$i][$key])) ? "'{$table[$i][$key]}', " : "'NULL', ";
+                    if (!empty($table[$i][$key])) {
+
+                        // Для того, чтобы в дальнейшем не иметь проблем с json
+                        // меняем все двойные кавычки (") на одинарные (')
+                        $clear_str = str_replace('"', "&quot;", $table[$i][$key]);
+
+                        // Для того, чтобы в дальнейшем не иметь проблем с json
+                        // меняем все "многопробелы", табуляции, переносы строк на одинарный пробел
+                        $clear_str = preg_replace('|\s+|', ' ', $clear_str);
+
+                        $cell = "'{$clear_str}', ";
+                    } else {
+
+                        $cell = "'NULL', ";
+                    }
 
                     $data .= $cell;
                 }
