@@ -5,10 +5,12 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/db.php');
 
 $db = new db(HOST, USER, PASSWORD, DB_NAME);
 
-$table = $db->select(TABLE_NAME);
+$tablename = "test-import-table-2";
+
+$table = $db->select($tablename);
 
 ?>
 
-<script id="db_points">
+<script id="js-db-points">
     const dbPoints = JSON.parse(`<?= json_encode($table) ?>`);
 </script>

@@ -50,6 +50,6 @@ if ($xlsx = SimpleXLSX::parse($file_path)) {
 
 ?>
 
-<script>
+<script id="js-new-points">
     const uploadedPoints = JSON.parse(`<?= json_encode($table_to_js) ?>`);
 </script>

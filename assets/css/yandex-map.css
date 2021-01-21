@@ -1,0 +1,39 @@
+.content.page__map {
+    display: flex;
+    min-height: calc(1040px - 80px);
+}
+
+.page__map .container-fluid {
+    display: flex;
+    flex-direction: column;
+}
+
+.page__map .map-row {
+    height: 100%;
+}
+
+.page__map #map {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.page__map .card-box {
+    display: flex;
+}
+
+.page__map .card__info {
+    margin: 0 20px 0 0;
+}
+
+.page__map .card-box {
+    display: flex;
+    align-items: center;
+}
+
+#upload-footer,
+#download-footer {
+    display: flex;
+    flex-direction: column;
+}

@@ -6,7 +6,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/declofnum.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/vendor/SimpleXLSX.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/vendor/SimpleXLSXGen.php');
 
-$tablename = "test-import-table";
+$tablename = "test-import-table-2";
 
 $db = new db(HOST, USER, PASSWORD, DB_NAME);
 
@@ -355,4 +355,4 @@ if (!file_exists($path)) {
 
 $xlsx->saveAs($path . $file);
 
-echo '<a href="/files/map_downloads/' . $file . '">Скачать (' . declOfNum(count($data), ['%d остановку', '%d остановки', '%d остановок']) . ')</a>';
+echo '<a class="btn btn-default" href="/files/map_downloads/' . $file . '">Скачать <span class="badge badge-primary badge-pill">' . declOfNum(count($data), ['%d остановку', '%d остановки', '%d остановок']) . '</span></a>';

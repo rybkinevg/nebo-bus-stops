@@ -12,13 +12,16 @@ function init() {
         }
     );
 
-    let listToAdd = [];
+    let listToAdd = {
+        ids: [],
+        gid: []
+    };
 
     let customItemContentLayout = ymaps.templateLayoutFactory.createClass(
         // Флаг "raw" означает, что данные вставляют "как есть" без экранирования html.
         '<h2 class=ballon_header>{{ properties.balloonContentHeader|raw }}</h2>' +
         '<div class=ballon_body>{{ properties.balloonContentBody|raw }}</div>' +
-        '<div class=ballon_footer><button class="btn-add" data-id="{{ properties.index }}" {{ properties.disabled }}>Добавить</button></div>', {
+        '<div class=ballon_footer><button class="btn btn-default btn-add" data-gid="{{ properties.g_id }}" data-id="{{ properties.index }}" {{ properties.disabled }}>Добавить в выгрузку</button></div>', {
 
         // Переопределяем функцию build, чтобы при создании макета начинать
         // слушать событие click на кнопке-счетчике.
@@ -41,10 +44,12 @@ function init() {
         onCounterClick: function () {
 
             let id = $(this).data("id");
+            let gid = $(this).data("gid");
 
             if ($.inArray(id, listToAdd) == -1 && id != 'none') {
 
-                listToAdd.push(id);
+                listToAdd['ids'].push(id);
+                listToAdd['gid'].push(gid);
             }
 
             $(this).attr('disabled', true);
@@ -66,14 +71,13 @@ function init() {
             clusterBalloonPanelMaxMapArea: 0,
             // Устанавливаем размер макета контента балуна (в пикселях).
             clusterBalloonContentLayoutWidth: 550,
+            clusterBalloonMaxHeight: 600,
             // Устанавливаем собственный макет.
             clusterBalloonItemContentLayout: customItemContentLayout,
             // Устанавливаем ширину левой колонки, в которой располагается список всех геообъектов кластера.
             clusterBalloonLeftColumnWidth: 130
         }
     );
-
-    const loader = document.querySelector('.loader');
 
     dbPoints.forEach((el) => {
         if (el.latitude != 'NULL' && el.longitude != 'NULL') {
@@ -86,8 +90,9 @@ function init() {
                 },
                 properties: {
                     balloonContentHeader: `Остановка ${el.invent_id} <b>${el.side}</b>`,
-                    balloonContentBody: `<p>ГИД: ${el.g_id}</p><p>Адрес: ${(el.address_near != 'NULL') ? el.address_near : 'Не указан'}</p><p>Сторона: ${el.side}</p><p>Прайс (с НДС): ${el.nds_rate}</p>`,
+                    balloonContentBody: `<p>ГИД: ${el.g_id}</p><p>Адрес: ${(el.address_near != 'NULL') ? el.address_near : 'Не указан'}</p><p>Сторона: ${el.side}</p><p>Направление: ${el.direction}</p><p>Прайс (с НДС): ${el.nds_rate}</p>`,
                     index: el.ID,
+                    g_id: el.g_id,
                     disabled: '',
                     clusterCaption: `${el.invent_id} <b>${el.side}</b>`
                 },
@@ -125,8 +130,6 @@ function init() {
 
     myMap.geoObjects.add(objectManager);
 
-    loader.classList.add('loaded');
-
     // Геокодер
 
     // $.getJSON('https://geocode-maps.yandex.ru/1.x/?', {
@@ -139,35 +142,12 @@ function init() {
     //     }
     // );
 
-    // Модалки
-
-    const btnModal = $('.js-modal-trigger');
-    const btnModalclose = $('.js-modal-close');
-
-    btnModal.on('click', function () {
-
-        let modalID = $(this).data('modal');
-        let modals = $('.modal');
-
-        modals.each(function (el) {
-
-            if ($(modals[el]).hasClass(`modal-${modalID}`)) {
-                $(modals[el]).addClass('--open');
-                $('.modals').addClass('--open');
-            }
-        });
-    });
-
-    btnModalclose.on('click', function () {
-
-        $(this).parent().parent().removeClass('--open').parent().removeClass('--open');
-    });
-
     // Форма загрузки
 
     const uploadForm = $('#upload-form');
     const uploadFile = $('#upload-file');
     const uploadBtn = $('#upload-submit');
+    const uploadMessage = $('#upload-footer');
 
     $(uploadFile).change(function () {
         if ($(this).val()) {
@@ -183,7 +163,6 @@ function init() {
         event.preventDefault();
 
         $(uploadBtn).attr('disabled', true);
-        //jQuery(importButtonLoader).removeClass('disabled');
 
         $.ajax({
             url: './includes/upload.php',
@@ -196,9 +175,7 @@ function init() {
 
                     $(uploadFile).attr('disabled', true);
 
-                    //jQuery(importButtonLoader).addClass('disabled');
-
-                    $(uploadForm).parent().append(`<div class="upload-response"><a href=${respond}>Обновить карту</a></div>`);
+                    $(uploadMessage).append(`<p>Выбранный файл успешно загружен, нажмите на кнопку "Обновить карту", чтобы изменения вступили в силу</p><a class="btn btn-default" href=${respond}>Обновить карту</a>`);
                 }
             },
             error: function (jqXHR, status, errorThrown) {
@@ -210,8 +187,8 @@ function init() {
     // Форма скачивания
 
     const btnUpdate = $('.js-download-update');
-    const btnDownload = $('.js-download-submit');
     const downloadList = $('.download-list');
+    const downloadMessage = $('#download-footer');
 
     function appendListItems(list) {
         let output = '';
@@ -223,21 +200,23 @@ function init() {
         return output;
     }
 
-    btnUpdate.on('click', function () {
-        if (listToAdd.length > 0) {
+    console.log(listToAdd.gid);
 
-            $(downloadList).html(appendListItems(listToAdd));
+    btnUpdate.on('click', function () {
+        if (listToAdd.ids.length > 0) {
+
+            $(downloadList).html(appendListItems(listToAdd.gid));
 
             $.ajax({
                 url: './includes/download.php',
                 type: 'GET',
                 contentType: false,
                 processData: false,
-                data: 'ids=' + listToAdd,
+                data: 'ids=' + listToAdd.ids,
                 success: function (respond, status, jqXHR) {
                     if (respond) {
 
-                        $(btnUpdate).next($('.download-link-wrapper')).html(respond);
+                        $(downloadMessage).append(`<p>Файл успешно сформирован и готов к выгрузке, нажмите на кнопку "Скачать"</p>${respond}`);
                     }
                 },
                 error: function (jqXHR, status, errorThrown) {
