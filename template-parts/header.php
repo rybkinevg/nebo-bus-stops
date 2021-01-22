@@ -222,7 +222,7 @@ $page = get_page();
                     </li>
 
                     <li>
-                        <a href="index.html">
+                        <a href="database.php">
                             <i class="ti-server"></i><span> База данных </span>
                         </a>
                     </li>

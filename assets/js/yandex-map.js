@@ -80,50 +80,100 @@ function init() {
     );
 
     dbPoints.forEach((el) => {
-        if (el.latitude != 'NULL' && el.longitude != 'NULL') {
-            objectManager.add({
-                type: 'Feature',
-                id: el.ID,
-                geometry: {
-                    type: 'Point',
-                    coordinates: [el.latitude, el.longitude]
-                },
-                properties: {
-                    balloonContentHeader: `Остановка ${el.invent_id} <b>${el.side}</b>`,
-                    balloonContentBody: `<p>ГИД: ${el.g_id}</p><p>Адрес: ${(el.address_near != 'NULL') ? el.address_near : 'Не указан'}</p><p>Сторона: ${el.side}</p><p>Направление: ${el.direction}</p><p>Прайс (с НДС): ${el.nds_rate}</p>`,
-                    index: el.ID,
-                    g_id: el.g_id,
-                    disabled: '',
-                    clusterCaption: `${el.invent_id} <b>${el.side}</b>`
-                },
-                options: {
-                    preset: "islands#violetDotIcon"
-                }
-            });
-        }
-    });
 
-    if (typeof uploadedPoints !== 'undefined') {
-        uploadedPoints.forEach((el) => {
-            if (el.latitude && el.longitude) {
-                objectManager.add({
+        if (el.latitude != 'NULL' && el.longitude != 'NULL') {
+
+            objectManager.add(
+                {
                     type: 'Feature',
-                    id: el.id,
+                    id: el.ID,
                     geometry: {
                         type: 'Point',
                         coordinates: [el.latitude, el.longitude]
                     },
                     properties: {
-                        balloonContentHeader: 'Импортированная остановка',
-                        balloonContentBody: 'Данная остановка была импортирована через "Добавить метки", кнопка "Добавить" внутри этой карточки не будет добавлять остановку в очередь.',
-                        index: 'none',
-                        disabled: 'disabled',
-                        clusterCaption: 'Остановка'
+                        balloonContentHeader: `Остановка ${el.invent_id} <b>${el.side}</b>`,
+                        balloonContentBody: `<p>ГИД: ${el.g_id}</p><p>Адрес: ${(el.address_near != 'NULL') ? el.address_near : 'Не указан'}</p><p>Сторона: ${el.side}</p><p>Направление: ${el.direction}</p><p>Прайс (с НДС): ${el.nds_rate}</p>`,
+                        index: el.ID,
+                        g_id: el.g_id,
+                        disabled: '',
+                        clusterCaption: `${el.invent_id} <b>${el.side}</b>`
                     },
                     options: {
-                        preset: "islands#blueDotIcon"
+                        preset: "islands#violetDotIcon"
                     }
-                });
+                }
+            );
+        }
+    });
+
+    if (typeof uploadedPoints !== 'undefined') {
+
+        uploadedPoints.forEach((el) => {
+
+            if (el.latitude && el.longitude) {
+
+                objectManager.add(
+                    {
+                        type: 'Feature',
+                        id: el.id,
+                        geometry: {
+                            type: 'Point',
+                            coordinates: [el.latitude, el.longitude]
+                        },
+                        properties: {
+                            balloonContentHeader: 'Импортированная остановка',
+                            balloonContentBody: `<p>Адрес: ${(el.address) ? el.address : 'Не указан'}</p><p>Координаты: ${(el.latitude && el.longitude) ? el.latitude + ', ' + el.longitude : 'Не указаны'}</p><p>Данная остановка была импортирована через "Добавить метки", кнопка "Добавить в выгрузку" внутри этой карточки не будет добавлять остановку в очередь.</p>`,
+                            index: 'none',
+                            disabled: 'disabled',
+                            clusterCaption: 'Остановка'
+                        },
+                        options: {
+                            preset: "islands#blueDotIcon"
+                        }
+                    }
+                );
+            } else {
+
+                if (el.address) {
+
+                    $.getJSON(
+                        'https://geocode-maps.yandex.ru/1.x/?',
+                        {
+                            format: 'json',
+                            apikey: '5571489d-8573-4ab6-8f61-558fd0453a57',
+                            geocode: el.address
+                        }
+                    ).done(function (data) {
+
+                        const coords = data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos.split(' ');
+                        console.log(data.response);
+                        console.log(el.address);
+                        console.log(coords);
+
+                        objectManager.add(
+                            {
+                                type: 'Feature',
+                                id: el.id,
+                                geometry: {
+                                    type: 'Point',
+                                    coordinates: [coords[1], coords[0]]
+                                },
+                                properties: {
+                                    balloonContentHeader: 'Импортированная остановка',
+                                    balloonContentBody: `<p> Адрес: ${(el.address) ? el.address : 'Не указан'}</p><p>Координаты: ${coords}</p><p>Данная остановка была импортирована через "Добавить метки", кнопка "Добавить в выгрузку" внутри этой карточки не будет добавлять остановку в очередь.</p>`,
+                                    index: 'none',
+                                    disabled: 'disabled',
+                                    clusterCaption: 'Остановка'
+                                },
+                                options: {
+                                    preset: "islands#blueDotIcon"
+                                }
+                            }
+                        );
+                    }
+                    );
+                }
             }
         });
     }
@@ -175,7 +225,7 @@ function init() {
 
                     $(uploadFile).attr('disabled', true);
 
-                    $(uploadMessage).append(`<p>Выбранный файл успешно загружен, нажмите на кнопку "Обновить карту", чтобы изменения вступили в силу</p><a class="btn btn-default" href=${respond}>Обновить карту</a>`);
+                    $(uploadMessage).append(`< p > Выбранный файл успешно загружен, нажмите на кнопку "Обновить карту", чтобы изменения вступили в силу</ > <a class="btn btn-default" href=${respond}>Обновить карту</a>`);
                 }
             },
             error: function (jqXHR, status, errorThrown) {
@@ -194,7 +244,7 @@ function init() {
         let output = '';
 
         list.forEach((el) => {
-            output += `<li>${el}</li>`;
+            output += `< li > ${el}</ > `;
         });
 
         return output;
@@ -216,7 +266,7 @@ function init() {
                 success: function (respond, status, jqXHR) {
                     if (respond) {
 
-                        $(downloadMessage).append(`<p>Файл успешно сформирован и готов к выгрузке, нажмите на кнопку "Скачать"</p>${respond}`);
+                        $(downloadMessage).append(`< p > Файл успешно сформирован и готов к выгрузке, нажмите на кнопку "Скачать"</ > ${respond} `);
                     }
                 },
                 error: function (jqXHR, status, errorThrown) {

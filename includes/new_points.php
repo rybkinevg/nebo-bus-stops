@@ -27,6 +27,10 @@ if ($xlsx = SimpleXLSX::parse($file_path)) {
 
                 $eng_table_titles[] = 'longitude';
                 break;
+            case 'Адрес':
+
+                $eng_table_titles[] = 'address';
+                break;
         }
     }
 

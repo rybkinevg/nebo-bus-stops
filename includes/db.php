@@ -41,27 +41,19 @@ class db
         }
     }
 
-    public function check_cols($tablename)
+    public function check_cols($tablename, $check = true)
     {
         $sql_check = "SELECT * FROM `{$tablename}` ORDER BY ID LIMIT 1";
         $result    = $this->connection->query($sql_check);
 
         if ($result) {
 
-            $titles = [
-                '%d поле',
-                '%d поля',
-                '%d полей',
-            ];
-
-            $cols = declOfNum($result->field_count, $titles);
-
-            $this->notice("Таблица содержит {$cols}");
+            return ($check) ? true : $result->field_count;
 
             $result->close();
         } else {
 
-            die("Ошибка: выбрана неверная таблица");
+            return false;
         }
     }
 
@@ -117,6 +109,20 @@ class db
         } else {
 
             die("Ошибка: выбрана неверная таблица");
+        }
+    }
+
+    public function drop($tablename)
+    {
+
+        $sql_drop = "DROP TABLE IF EXISTS `{$tablename}`";
+
+        if ($this->connection->query($sql_drop) === TRUE) {
+
+            return true;
+        } else {
+
+            die("Ошибка при добавлении данных в таблицу {$tablename}: " . $this->connection->error);
         }
     }
 }

@@ -37,3 +37,30 @@
     display: flex;
     flex-direction: column;
 }
+
+.page__map .ballon_header {
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+}
+
+.page__map .ballon_body {
+    margin-bottom: 20px;
+}
+
+.page__map .ballon_header::after {
+    content: '';
+    display: block;
+    height: 2px;
+    background: #000;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.page__map .ballon_footer::before {
+    content: '';
+    display: block;
+    height: 2px;
+    background: #000;
+    width: 100%;
+    margin-bottom: 10px;
+}

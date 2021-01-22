@@ -58,3 +58,9 @@ function enqueue_scripts($page)
 
     return $scripts;
 }
+
+function check_table(db $db, $tablename)
+{
+
+    return (empty($db->check_cols($tablename))) ? false : true;
+}
