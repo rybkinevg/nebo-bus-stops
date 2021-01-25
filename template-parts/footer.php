@@ -1,6 +1,6 @@
 <div class="footer">
     <div class="pull-right hide-phone">
-        v. <strong class="text-custom">1.0.0</strong>
+        v. <strong class="text-custom">1.0.1</strong>
     </div>
     <div>
         <strong>Интерактивный помощник</strong>

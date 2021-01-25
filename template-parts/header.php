@@ -1,5 +1,9 @@
 <?php
 
+require_once($_SERVER['DOCUMENT_ROOT'] . '/config.php');
+
+if (!defined('INSTALLED')) header('Location: /install/install.php');
+
 require_once($_SERVER['DOCUMENT_ROOT'] . '/functions.php');
 
 $page = get_page();
@@ -204,19 +208,19 @@ $page = get_page();
                     </li>
 
                     <li>
-                        <a href="index.html">
+                        <a href="statuses.php">
                             <i class="ti-stats-up"></i><span> Статусы </span>
                         </a>
                     </li>
 
                     <li>
-                        <a href="index.html">
+                        <a href="busstops-base.php">
                             <i class="ti-map-alt"></i><span> База остановок </span>
                         </a>
                     </li>
 
                     <li>
-                        <a href="index.html">
+                        <a href="faq.php">
                             <i class="ti-help-alt"></i><span> Инструкция </span>
                         </a>
                     </li>

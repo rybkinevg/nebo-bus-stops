@@ -1,15 +1,35 @@
 <?php
 
-function get_header()
+function get_path($url = false)
 {
+    if ($url) {
 
-    require_once($_SERVER['DOCUMENT_ROOT'] . '/template-parts/header.php');
+        return $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'];
+    }
 }
 
-function get_footer()
+function get_header($custom = false)
 {
 
-    require_once($_SERVER['DOCUMENT_ROOT'] . '/template-parts/footer.php');
+    if ($custom) {
+
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/template-parts/header-not-main.php');
+    } else {
+
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/template-parts/header.php');
+    }
+}
+
+function get_footer($custom = false)
+{
+
+    if ($custom) {
+
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/template-parts/footer-not-main.php');
+    } else {
+
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/template-parts/footer.php');
+    }
 }
 
 function get_page()
@@ -22,8 +42,9 @@ function get_page()
 
     if ($url != '/') {
 
-        $page = mb_substr($url, 0, -4);
-        $page = str_replace("/", "", $page);
+        $page = basename(mb_substr($url, 0, -4));
+        //$page = mb_substr($url, 0, -4);
+        //$page = str_replace("/", "", $page);
     } else {
 
         $page = "home";
@@ -34,27 +55,33 @@ function get_page()
 
 function enqueue_scripts($page)
 {
-    $scripts['jquery'] = "./assets/js/jquery.min.js";
-    $scripts['popper'] = "./assets/js/popper.min.js";
-    $scripts['bootstrap'] = "./assets/js/bootstrap.min.js";
-    $scripts['metisMenu'] = "./assets/js/metisMenu.min.js";
-    $scripts['waves'] = "./assets/js/waves.js";
-    $scripts['slimscroll'] = "./assets/js/jquery.slimscroll.js";
+    $scripts['jquery'] = get_path(true) . "/assets/js/jquery.min.js";
+    $scripts['popper'] = get_path(true) . "/assets/js/popper.min.js";
+    $scripts['bootstrap'] = get_path(true) . "/assets/js/bootstrap.min.js";
+    $scripts['metisMenu'] = get_path(true) . "/assets/js/metisMenu.min.js";
+    $scripts['waves'] = get_path(true) . "/assets/js/waves.js";
+    $scripts['slimscroll'] = get_path(true) . "/assets/js/jquery.slimscroll.js";
 
-    if ($page == 'home') {
+    if ($page == 'install') {
+    } elseif ($page == 'home') {
 
-        $scripts['morris'] = "./assets/plugins/morris/morris.min.js";
-        $scripts['raphael'] = "./assets/plugins/raphael/raphael-min.js";
-        $scripts['dashboard'] = "./assets/pages/jquery.dashboard.js";
+        $scripts['morris'] = get_path(true) . "/assets/plugins/morris/morris.min.js";
+        $scripts['raphael'] = get_path(true) . "/assets/plugins/raphael/raphael-min.js";
+        $scripts['dashboard'] = get_path(true) . "/assets/pages/jquery.dashboard.js";
     } elseif ($page == 'map') {
 
         $scripts['api-yandex-maps'] = "https://api-maps.yandex.ru/2.1/?lang=ru-RU&apikey=5571489d-8573-4ab6-8f61-558fd0453a57";
-        $scripts['bootstrap-filestyle'] = "assets/plugins/bootstrap-filestyle/js/bootstrap-filestyle.min.js";
-        $scripts['yandex-map'] = "./assets/js/yandex-map.js";
+        $scripts['bootstrap-filestyle'] = get_path(true) . "assets/plugins/bootstrap-filestyle/js/bootstrap-filestyle.min.js";
+        $scripts['yandex-map'] = get_path(true) . "/assets/js/yandex-map.js";
+    } elseif ($page == 'database') {
+
+        //$scripts['sweet-alert2'] = get_path(true) . "/assets/plugins/sweet-alert2/sweetalert2.min.js";
+        //$scripts['sweet-alert-init'] = get_path(true) . "/assets/pages/jquery.sweet-alert.init.js";
+        $scripts['database'] = get_path(true) . "/assets/js/database.js";
     }
 
-    $scripts['core'] = "./assets/js/jquery.core.js";
-    $scripts['app'] = "./assets/js/jquery.app.js";
+    $scripts['core'] = get_path(true) . "/assets/js/jquery.core.js";
+    $scripts['app'] = get_path(true) . "/assets/js/jquery.app.js";
 
     return $scripts;
 }

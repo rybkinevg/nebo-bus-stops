@@ -21,43 +21,58 @@ function init() {
         // Флаг "raw" означает, что данные вставляют "как есть" без экранирования html.
         '<h2 class=ballon_header>{{ properties.balloonContentHeader|raw }}</h2>' +
         '<div class=ballon_body>{{ properties.balloonContentBody|raw }}</div>' +
-        '<div class=ballon_footer><button class="btn btn-default btn-add" data-gid="{{ properties.g_id }}" data-id="{{ properties.index }}" {{ properties.disabled }}>Добавить в выгрузку</button></div>', {
+        '{% if properties.canDownload %}<div class=ballon_footer><button class="btn btn-primary btn-add" data-gid="{{ properties.g_id }}" data-id="{{ properties.index }}" {{ properties.disabled|"" }}>{{ properties.btnText }}</button></div>{% endif %}',
+        {
+            // Переопределяем функцию build, чтобы при создании макета начинать
+            // слушать событие click на кнопке-счетчике.
+            build: function () {
+                // Сначала вызываем метод build родительского класса.
+                customItemContentLayout.superclass.build.call(this);
+                // А затем выполняем дополнительные действия.
+                $('.btn-add').bind('click', this.onCounterClick);
+            },
 
-        // Переопределяем функцию build, чтобы при создании макета начинать
-        // слушать событие click на кнопке-счетчике.
-        build: function () {
-            // Сначала вызываем метод build родительского класса.
-            customItemContentLayout.superclass.build.call(this);
-            // А затем выполняем дополнительные действия.
-            $('.btn-add').bind('click', this.onCounterClick);
-        },
+            // Аналогично переопределяем функцию clear, чтобы снять
+            // прослушивание клика при удалении макета с карты.
+            clear: function () {
+                // Выполняем действия в обратном порядке - сначала снимаем слушателя,
+                // а потом вызываем метод clear родительского класса.
+                $('.btn-add').unbind('click', this.onCounterClick);
+                customItemContentLayout.superclass.clear.call(this);
+            },
 
-        // Аналогично переопределяем функцию clear, чтобы снять
-        // прослушивание клика при удалении макета с карты.
-        clear: function () {
-            // Выполняем действия в обратном порядке - сначала снимаем слушателя,
-            // а потом вызываем метод clear родительского класса.
-            $('.btn-add').unbind('click', this.onCounterClick);
-            customItemContentLayout.superclass.clear.call(this);
-        },
+            onCounterClick: function () {
 
-        onCounterClick: function () {
+                let id = $(this).data("id");
+                let gid = $(this).data("gid");
 
-            let id = $(this).data("id");
-            let gid = $(this).data("gid");
+                if ($.inArray(id, listToAdd) == -1 && id != 'none') {
 
-            if ($.inArray(id, listToAdd) == -1 && id != 'none') {
+                    listToAdd['ids'].push(id);
+                    listToAdd['gid'].push(gid);
 
-                listToAdd['ids'].push(id);
-                listToAdd['gid'].push(gid);
+                    // Сначала напрямую меняем кнопку, чтобы сразу отобразить изменения
+                    $(this).attr('disabled', true);
+                    $(this).text('Добавлено');
+
+                    // Изменение отображения на карте
+                    objectManager.objects.setObjectOptions(id, {
+                        preset: 'islands#redIcon'
+                    });
+
+                    // Изменение свойств объекта, чтобы сохранить состояние, так как, меняя напрямую, состояние не сохраняется
+                    objectManager.objects.setObjectProperties(id, {
+                        disabled: 'disabled',
+                        btnText: 'Добавлено'
+                    });
+                }
+
+                // Получение объекта по айди
+                // object = objectManager.objects.getById(id);
+
+                console.log('Добавленные точки', listToAdd);
             }
-
-            $(this).attr('disabled', true);
-            $(this).text('Добавлено');
-
-            console.log('Добавленные точки', listToAdd);
-        }
-    });
+        });
 
     let objectManager = new ymaps.ObjectManager(
         {
@@ -71,11 +86,12 @@ function init() {
             clusterBalloonPanelMaxMapArea: 0,
             // Устанавливаем размер макета контента балуна (в пикселях).
             clusterBalloonContentLayoutWidth: 550,
-            clusterBalloonMaxHeight: 600,
             // Устанавливаем собственный макет.
             clusterBalloonItemContentLayout: customItemContentLayout,
             // Устанавливаем ширину левой колонки, в которой располагается список всех геообъектов кластера.
-            clusterBalloonLeftColumnWidth: 130
+            clusterBalloonLeftColumnWidth: 130,
+            // Устанавливаем высоту панели
+            clusterBalloonContentLayoutHeight: 350,
         }
     );
 
@@ -96,7 +112,8 @@ function init() {
                         balloonContentBody: `<p>ГИД: ${el.g_id}</p><p>Адрес: ${(el.address_near != 'NULL') ? el.address_near : 'Не указан'}</p><p>Сторона: ${el.side}</p><p>Направление: ${el.direction}</p><p>Прайс (с НДС): ${el.nds_rate}</p>`,
                         index: el.ID,
                         g_id: el.g_id,
-                        disabled: '',
+                        canDownload: true,
+                        btnText: 'Добавить в выгрузку',
                         clusterCaption: `${el.invent_id} <b>${el.side}</b>`
                     },
                     options: {
@@ -123,9 +140,9 @@ function init() {
                         },
                         properties: {
                             balloonContentHeader: 'Импортированная остановка',
-                            balloonContentBody: `<p>Адрес: ${(el.address) ? el.address : 'Не указан'}</p><p>Координаты: ${(el.latitude && el.longitude) ? el.latitude + ', ' + el.longitude : 'Не указаны'}</p><p>Данная остановка была импортирована через "Добавить метки", кнопка "Добавить в выгрузку" внутри этой карточки не будет добавлять остановку в очередь.</p>`,
+                            balloonContentBody: `<p>Адрес: ${(el.address) ? el.address : 'Не указан'}</p><p>Координаты: ${(el.latitude && el.longitude) ? el.latitude + ', ' + el.longitude : 'Не указаны'}</p><p>Данная остановка была импортирована через "Добавить метки"</p>`,
                             index: 'none',
-                            disabled: 'disabled',
+                            canDownload: false,
                             clusterCaption: 'Остановка'
                         },
                         options: {
@@ -147,9 +164,6 @@ function init() {
                     ).done(function (data) {
 
                         const coords = data.response.GeoObjectCollection.featureMember[0].GeoObject.Point.pos.split(' ');
-                        console.log(data.response);
-                        console.log(el.address);
-                        console.log(coords);
 
                         objectManager.add(
                             {
@@ -225,7 +239,7 @@ function init() {
 
                     $(uploadFile).attr('disabled', true);
 
-                    $(uploadMessage).append(`< p > Выбранный файл успешно загружен, нажмите на кнопку "Обновить карту", чтобы изменения вступили в силу</ > <a class="btn btn-default" href=${respond}>Обновить карту</a>`);
+                    $(uploadMessage).append(`<p> Выбранный файл успешно загружен, нажмите на кнопку "Обновить карту", чтобы изменения вступили в силу</p> <a class="btn btn-default" href=${respond}>Обновить карту</a>`);
                 }
             },
             error: function (jqXHR, status, errorThrown) {
@@ -237,25 +251,32 @@ function init() {
     // Форма скачивания
 
     const btnUpdate = $('.js-download-update');
+    const btnDownload = $('.js-download-download');
     const downloadList = $('.download-list');
     const downloadMessage = $('#download-footer');
 
     function appendListItems(list) {
-        let output = '';
 
-        list.forEach((el) => {
-            output += `< li > ${el}</ > `;
-        });
+        if (list.length > 0) {
 
-        return output;
+            let output = '';
+
+            list.forEach((el) => {
+                output += `<li> ${el}</li> `;
+            });
+
+            return output;
+        }
     }
 
-    console.log(listToAdd.gid);
-
     btnUpdate.on('click', function () {
-        if (listToAdd.ids.length > 0) {
 
-            $(downloadList).html(appendListItems(listToAdd.gid));
+        $(downloadList).html(appendListItems(listToAdd.gid));
+    });
+
+    btnDownload.on('click', function () {
+
+        if (listToAdd.ids.length > 0) {
 
             $.ajax({
                 url: './includes/download.php',
@@ -266,7 +287,7 @@ function init() {
                 success: function (respond, status, jqXHR) {
                     if (respond) {
 
-                        $(downloadMessage).append(`< p > Файл успешно сформирован и готов к выгрузке, нажмите на кнопку "Скачать"</ > ${respond} `);
+                        $(downloadMessage).html(`<p> Файл успешно сформирован и готов к выгрузке, нажмите на кнопку "Скачать"</p> ${respond}`);
                     }
                 },
                 error: function (jqXHR, status, errorThrown) {

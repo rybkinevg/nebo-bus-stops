@@ -1,7 +1,7 @@
 <?php
 
 require_once($_SERVER['DOCUMENT_ROOT'] . '/functions.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/config.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/config.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/db.php');
 
 $db = new db(HOST, USER, PASSWORD, DB_NAME);
@@ -19,12 +19,13 @@ get_header();
                 </div>
                 <?php
 
-                if (check_table($db, 'busstops')) {
+                // if (check_table($db, 'busstops')) {
+                if (check_table($db, BUSSTOPS_TABLE)) {
                 ?>
                     <div class="panel-body">
                         <p>Таблица существует</p>
-                        <button id="db-import-busstops" type="button" class="btn btn-primary m-t-10">Импортировать</button>
-                        <button id="db-delete-busstops" type="button" class="btn btn-danger m-t-10">Удалить</button>
+                        <button id="js-db-import-busstops" type="button" class="btn btn-primary m-t-10">Импортировать</button>
+                        <button id="js-db-delete-busstops" type="button" class="btn btn-danger m-t-10">Удалить</button>
                     </div>
                 <?php
                 } else {
@@ -37,7 +38,7 @@ get_header();
                             Таблицы не существует!
                         </div>
                         <p class="p-b-2">Добавить таблицу, в которой будут все остановки по заготовленному шаблону.</p>
-                        <button id="db-create-busstops" type="button" class="btn btn-primary m-t-10">Добавить</button>
+                        <button id="js-db-create-busstops" type="button" class="btn btn-primary m-t-10">Создать</button>
                     </div>
                 <?php
                 }

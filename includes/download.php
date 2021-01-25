@@ -1,12 +1,12 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/config.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/config.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/db.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/declofnum.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/vendor/SimpleXLSX.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/vendor/SimpleXLSXGen.php');
 
-$tablename = "test-import-table-2";
+$tablename = BUSSTOPS_TABLE;
 
 $db = new db(HOST, USER, PASSWORD, DB_NAME);
 

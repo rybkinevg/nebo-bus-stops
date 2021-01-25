@@ -1,12 +1,17 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/config.php');
+// Подключение необходимых библиотек, настроек и классов
+require_once($_SERVER['DOCUMENT_ROOT'] . '/config.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/db.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/vendor/SimpleXLSX.php');
 
+// Создание подключения к БД
 $db = new db(HOST, USER, PASSWORD, DB_NAME);
 
-$tablename   = "test-import-table-2";
+// Название таблицы
+$tablename = BUSSTOPS_TABLE;
 
+// Ключи таблицы
 $keys = [
     'ID'         => [
         'name'     => 'Номер',
@@ -310,11 +315,13 @@ $keys = [
     ]
 ];
 
+// Получение название ключей таблицы, как в таблице exel
 foreach ($keys as $key) {
 
     $keys_titles[] = $key['name'];
 }
 
+// Генерация SQL запроса на создание таблицы
 function generate_keys_query($keys)
 {
     $output = '';
@@ -371,60 +378,107 @@ function generate_keys_query($keys)
     return mb_substr($output, 0, -2);
 };
 
-$db->create($tablename, generate_keys_query($keys));
+// Создание таблицы
+if ($_POST['action'] === 'create-busstops') {
 
-$db->check_cols($tablename);
+    $db->create($tablename, generate_keys_query($keys));
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/vendor/SimpleXLSX.php');
+    $response = [
+        'success' => true,
+        'message' => 'Таблица успешно создана'
+    ];
 
-$file_path = './files/db_imports/database.xlsx';
+    header('Content-Type: application/json');
 
-if ($xlsx = SimpleXLSX::parse($file_path)) {
+    echo json_encode($response);
+}
 
-    $table = $xlsx->rows();
+// Импорт в таблицу
+else if ($_POST['action'] === 'import-busstops') {
 
-    for ($i = 0; $i < count($table); $i++) {
+    $file_path = $_SERVER['DOCUMENT_ROOT'] . '/files/db_imports/database.xlsx';
 
-        if ($i == 0) {
+    if ($xlsx = SimpleXLSX::parse($file_path)) {
 
-            $titles = $table[$i];
-        } else {
+        $table = $xlsx->rows();
 
-            $data = '';
+        for ($i = 0; $i < count($table); $i++) {
 
-            // TODO: сопоставить порядок ключей, чтобы не произошло такого,
-            // что они перемешаются, например, ключ - side в БД занимает второе место
-            // а в таблице с заголовками будет занимать 5ое место, всё сломается
-            foreach ($titles as $key => $value) {
+            if ($i == 0) {
 
-                if (in_array($value, $keys_titles)) {
+                $titles = $table[$i];
+            } else {
 
-                    if (!empty($table[$i][$key])) {
+                $data = '';
 
-                        // Для того, чтобы в дальнейшем не иметь проблем с json
-                        // меняем все двойные кавычки (") на одинарные (')
-                        $clear_str = str_replace('"', "&quot;", $table[$i][$key]);
+                // TODO: сопоставить порядок ключей, чтобы не произошло такого,
+                // что они перемешаются, например, ключ - side в БД занимает второе место
+                // а в таблице с заголовками будет занимать 5ое место, всё сломается
+                foreach ($titles as $key => $value) {
 
-                        // Для того, чтобы в дальнейшем не иметь проблем с json
-                        // меняем все "многопробелы", табуляции, переносы строк на одинарный пробел
-                        $clear_str = preg_replace('|\s+|', ' ', $clear_str);
+                    if (in_array($value, $keys_titles)) {
 
-                        $cell = "'{$clear_str}', ";
-                    } else {
+                        if (!empty($table[$i][$key])) {
 
-                        $cell = "'NULL', ";
+                            // Для того, чтобы в дальнейшем не иметь проблем с json
+                            // меняем все двойные кавычки (") на одинарные (')
+                            $clear_str = str_replace('"', "&quot;", $table[$i][$key]);
+
+                            // Для того, чтобы в дальнейшем не иметь проблем с json
+                            // меняем все "многопробелы", табуляции, переносы строк на одинарный пробел
+                            $clear_str = preg_replace('|\s+|', ' ', $clear_str);
+
+                            $cell = "'{$clear_str}', ";
+                        } else {
+
+                            $cell = "'NULL', ";
+                        }
+
+                        $data .= $cell;
                     }
-
-                    $data .= $cell;
                 }
+
+                $clear_data = mb_substr($data, 0, -2);
+
+                $db->insert($tablename, "NULL, {$clear_data}");
             }
-
-            $clear_data = mb_substr($data, 0, -2);
-
-            $db->insert($tablename, "NULL, {$clear_data}");
         }
+
+        $response = [
+            'success' => true,
+            'message' => 'Таблица успешно заполнена'
+        ];
+
+        header('Content-Type: application/json');
+
+        echo json_encode($response);
+    } else {
+
+        echo SimpleXLSX::parseError();
     }
+}
+
+// Импорт в таблицу
+else if ($_POST['action'] === 'delete-busstops') {
+
+    $db->drop($tablename);
+
+    $response = [
+        'success' => true,
+        'message' => 'Таблица успешно удалена'
+    ];
+
+    header('Content-Type: application/json');
+
+    echo json_encode($response);
 } else {
 
-    echo SimpleXLSX::parseError();
+    $response = [
+        'success' => false,
+        'message' => 'Ошибка!!!'
+    ];
+
+    header('Content-Type: application/json');
+
+    echo json_encode($response);
 }

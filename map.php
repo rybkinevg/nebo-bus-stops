@@ -54,7 +54,8 @@ $file = ($_GET['file']) ? $_GET['file'] : false;
                             <li>Ничего не найдено</li>
                         </ul>
                         <div class="form-group text-right m-0">
-                            <button type="button" class="btn btn-primary waves-effect waves-light js-download-update">Обновить данные</button>
+                            <button type="button" class="btn btn-default waves-effect waves-light js-download-update">Обновить данные</button>
+                            <button type="button" class="btn btn-primary waves-effect waves-light js-download-download">Подготовить файл</button>
                         </div>
                     </div>
                     <div id="download-footer" class="modal-footer"></div>
@@ -69,7 +70,7 @@ $file = ($_GET['file']) ? $_GET['file'] : false;
                     <p class="m-0">Добавляет импортированные точки на карту, помечая их другим цветом</p>
                 </div>
                 <div class="card__btn">
-                    <button type="button" class="btn btn-sm btn-default waves-effect waves-light" data-toggle="modal" data-target="#importModal"><i class="ti-import"></i></button>
+                    <button type="button" class="btn btn-sm btn-primary waves-effect waves-light" data-toggle="modal" data-target="#importModal"><i class="ti-import"></i></button>
                 </div>
             </div>
         </div>
@@ -81,7 +82,7 @@ $file = ($_GET['file']) ? $_GET['file'] : false;
                     <p class="m-0">Возможность скачивания выбранных точек, добавленных для выгрузки</p>
                 </div>
                 <div class="card__btn">
-                    <button type="button" class="btn btn-sm btn-default waves-effect waves-light" data-toggle="modal" data-target="#exportModal"><i class="ti-export"></i></button>
+                    <button type="button" class="btn btn-sm btn-primary waves-effect waves-light" data-toggle="modal" data-target="#exportModal"><i class="ti-export"></i></button>
                 </div>
             </div>
         </div>
