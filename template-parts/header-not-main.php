@@ -19,16 +19,18 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/functions.php');
     <meta content="Coderthemes" name="author" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <!-- App favicon -->
-    <link rel="shortcut icon" href="<?= get_path(true) . '/assets/images/favicon.ico' ?>">
+    <?php
 
-    <!-- App css -->
-    <link href="<?= get_path(true) . '/assets/css/bootstrap.min.css' ?>" rel="stylesheet" type="text/css" />
-    <link href="<?= get_path(true) . '/assets/css/icons.css' ?>" rel="stylesheet" type="text/css" />
-    <link href="<?= get_path(true) . '/assets/css/metismenu.min.css' ?>" rel="stylesheet" type="text/css" />
-    <link href="<?= get_path(true) . '/assets/css/style.css' ?>" rel="stylesheet" type="text/css" />
+    echo get_favicon($page);
 
-    <script src="<?= get_path(true) . '/assets/js/modernizr.min.js' ?>"></script>
+    $styles = enqueue_styles($page);
+
+    foreach ($styles as $key => $value) {
+
+        echo "<link rel='stylesheet' id='css-{$key}' href='{$value}'>";
+    }
+
+    ?>
 
 </head>
 

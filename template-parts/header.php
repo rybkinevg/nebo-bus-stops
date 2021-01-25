@@ -21,20 +21,18 @@ $page = get_page();
     <meta content="Coderthemes" name="author" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <!-- App favicon -->
-    <link rel="shortcut icon" href="assets/images/favicon.ico">
+    <?php
 
-    <!--Morris Chart CSS -->
-    <link rel="stylesheet" href="assets/plugins/morris/morris.css">
+    echo get_favicon($page);
 
-    <!-- App css -->
-    <link href="./assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <link href="./assets/css/icons.css" rel="stylesheet" type="text/css" />
-    <link href="./assets/css/metismenu.min.css" rel="stylesheet" type="text/css" />
-    <link href="./assets/css/style.css" rel="stylesheet" type="text/css" />
-    <link href="./assets/css/yandex-map.css" rel="stylesheet" type="text/css" />
+    $styles = enqueue_styles($page);
 
-    <script src="assets/js/modernizr.min.js"></script>
+    foreach ($styles as $key => $value) {
+
+        echo "<link rel='stylesheet' id='css-{$key}' href='{$value}'>";
+    }
+
+    ?>
 
 </head>
 

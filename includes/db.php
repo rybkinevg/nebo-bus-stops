@@ -126,6 +126,43 @@ class db
         }
     }
 
+    public function count($tablename, $what = '*', $where = '')
+    {
+        if ($where) {
+
+            $where = " WHERE $where";
+        }
+
+        if ($result = $this->connection->query("SELECT COUNT({$what}) as total FROM `{$tablename}`{$where}")) {
+
+            if ($what != '*') {
+                for ($set = array(); $row = $result->fetch_assoc(); $set[] = $row[$what]);
+
+                $result->free();
+
+                return $set[0]['total'];
+            } else {
+
+                for ($set = array(); $row = $result->fetch_assoc(); $set[] = $row);
+
+                $result->free();
+
+                return $set[0]['total'];
+            }
+        } else {
+
+            die("Ошибка: выбрана неверная таблица");
+        }
+    }
+
+    public function get_last_update($dbname, $tablename)
+    {
+        $sql_last_update = "SELECT OBJECT_NAME(OBJECT_ID) AS DatabaseName, last_user_update,*
+        FROM sys.dm_db_index_usage_stats
+        WHERE database_id = DB_ID('{$dbname}')
+        AND OBJECT_ID=OBJECT_ID('{$tablename}'})";
+    }
+
     public function drop($tablename)
     {
 

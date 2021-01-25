@@ -23,7 +23,8 @@ get_header();
                 if (check_table($db, BUSSTOPS_TABLE)) {
                 ?>
                     <div class="panel-body">
-                        <p>Таблица существует</p>
+                        <p class="text-success">Таблица существует</p>
+                        <p>Найдено <strong><?= $db->count(BUSSTOPS_TABLE) ?></strong> строк</p>
                         <button id="js-db-import-busstops" type="button" class="btn btn-primary m-t-10">Импортировать</button>
                         <button id="js-db-delete-busstops" type="button" class="btn btn-danger m-t-10">Удалить</button>
                     </div>
