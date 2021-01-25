@@ -86,9 +86,9 @@ $keys = [
         'primary'  => ''
     ],
     'map_link'    => [
-        'name'     => 'Яндекс.Карта',
-        'type'     => 'VARCHAR',
-        'length'   => '200',
+        'name'     => 'Ссылка Яндекс.Карты',
+        'type'     => 'LONGTEXT',
+        'length'   => '',
         'default'  => '',
         'encoding' => '',
         'attr'     => '',
@@ -98,9 +98,9 @@ $keys = [
         'primary'  => ''
     ],
     'panorama_link'    => [
-        'name'     => 'Панорама',
-        'type'     => 'VARCHAR',
-        'length'   => '200',
+        'name'     => 'Ссылка Яндекс.Панорамы',
+        'type'     => 'LONGTEXT',
+        'length'   => '',
         'default'  => '',
         'encoding' => '',
         'attr'     => '',
@@ -110,9 +110,9 @@ $keys = [
         'primary'  => ''
     ],
     'photo'    => [
-        'name'     => 'Фото',
-        'type'     => 'VARCHAR',
-        'length'   => '200',
+        'name'     => 'Ссылка фото',
+        'type'     => 'LONGTEXT',
+        'length'   => '',
         'default'  => '',
         'encoding' => '',
         'attr'     => '',
@@ -122,9 +122,9 @@ $keys = [
         'primary'  => ''
     ],
     'map_schema'    => [
-        'name'     => 'Схема',
-        'type'     => 'VARCHAR',
-        'length'   => '200',
+        'name'     => 'Ссылка схема',
+        'type'     => 'LONGTEXT',
+        'length'   => '',
         'default'  => '',
         'encoding' => '',
         'attr'     => '',
@@ -396,7 +396,7 @@ if ($_POST['action'] === 'create-busstops') {
 // Импорт в таблицу
 else if ($_POST['action'] === 'import-busstops') {
 
-    $file_path = $_SERVER['DOCUMENT_ROOT'] . '/files/db_imports/database.xlsx';
+    $file_path = $_SERVER['DOCUMENT_ROOT'] . '/files/db_imports/database2.xlsx';
 
     if ($xlsx = SimpleXLSX::parse($file_path)) {
 
