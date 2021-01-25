@@ -3345,4 +3345,8 @@ h3.timeline-title {
   margin-top: 0;
   display: inline-block;
 }
+
+.page__busstops-base th {
+  min-width: 203px;
+}
 /*# sourceMappingURL=style.css.map */
