@@ -132,17 +132,17 @@ $page = get_page();
                             </div> -->
 
                             <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item">
+                            <a href="profile.php" class="dropdown-item notify-item">
                                 <i class="ti-user"></i> <span>Профиль</span>
                             </a>
 
                             <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item">
+                            <a href="profile.php" class="dropdown-item notify-item">
                                 <i class="ti-settings"></i> <span>Настройки</span>
                             </a>
 
                             <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item">
+                            <a href="profile.php" class="dropdown-item notify-item">
                                 <i class="ti-lock"></i> <span>Lock Screen</span>
                             </a>
 

@@ -1,6 +1,10 @@
 <?php
 
 require_once($_SERVER['DOCUMENT_ROOT'] . '/functions.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/config.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/db.php');
+
+$db = new db(HOST, USER, PASSWORD, DB_NAME);
 
 get_header();
 
@@ -19,37 +23,33 @@ get_header();
         <div class="col-sm-12">
             <div class="card-box widget-inline">
                 <div class="row">
-                    <div class="col-lg-3 col-sm-6">
+                    <div class="col-lg col-sm-6">
                         <div class="widget-inline-box text-center">
-                            <h3 class="m-t-10"><i class="text-primary mdi mdi-access-point-network"></i>
-                                <b>8954</b>
+                            <h3 class="m-t-10">
+                                <i class="text-primary ti-location-pin"></i>
+                                <b><?= $db->count(BUSSTOPS_TABLE) ?></b>
                             </h3>
-                            <p class="text-muted">Lifetime total sales</p>
+                            <p class="text-muted">Всего остановок в базе</p>
                         </div>
                     </div>
 
-                    <div class="col-lg-3 col-sm-6">
+                    <div class="col-lg col-sm-6">
                         <div class="widget-inline-box text-center">
-                            <h3 class="m-t-10"><i class="text-custom mdi mdi-airplay"></i> <b>7841</b>
+                            <h3 class="m-t-10">
+                                <i class="text-custom ti-shopping-cart"></i>
+                                <b>7841</b>
                             </h3>
-                            <p class="text-muted">Income amounts</p>
+                            <p class="text-muted">Всего купленных сотановок</p>
                         </div>
                     </div>
 
-                    <div class="col-lg-3 col-sm-6">
+                    <div class="col-lg col-sm-6">
                         <div class="widget-inline-box text-center">
-                            <h3 class="m-t-10"><i class="text-info mdi mdi-black-mesa"></i> <b>6521</b>
+                            <h3 class="m-t-10">
+                                <i class="text-info ti-user"></i>
+                                <b>6521</b>
                             </h3>
-                            <p class="text-muted">Total users</p>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3 col-sm-6">
-                        <div class="widget-inline-box text-center b-0">
-                            <h3 class="m-t-10"><i class="text-danger mdi mdi-cellphone-link"></i>
-                                <b>325</b>
-                            </h3>
-                            <p class="text-muted">Total visits</p>
+                            <p class="text-muted">Всего пользователей</p>
                         </div>
                     </div>
 
@@ -63,15 +63,14 @@ get_header();
     <div class="row">
         <div class="col-lg-6">
             <div class="card-box">
-                <h6 class="m-t-0">Total Revenue</h6>
+                <h6 class="m-t-0">Купленные остановки в этом году</h6>
                 <div class="text-center">
                     <ul class="list-inline chart-detail-list">
                         <li class="list-inline-item">
-                            <p class="font-normal"><i class="fa fa-circle m-r-10 text-primary"></i>Series A</p>
+                            <p class="font-normal"><i class="fa fa-circle m-r-10 text-primary"></i>Нынешний</p>
                         </li>
                         <li class="list-inline-item">
-                            <p class="font-normal"><i class="fa fa-circle m-r-10 text-muted"></i>Series
-                                B</p>
+                            <p class="font-normal"><i class="fa fa-circle m-r-10 text-muted"></i>Прошлый</p>
                         </li>
                     </ul>
                 </div>
@@ -81,14 +80,11 @@ get_header();
 
         <div class="col-lg-6">
             <div class="card-box">
-                <h6 class="m-t-0">Sales Analytics</h6>
+                <h6 class="m-t-0">Купленные остановки за все года</h6>
                 <div class="text-center">
                     <ul class="list-inline chart-detail-list">
                         <li class="list-inline-item">
-                            <p class="font-weight-bold"><i class="fa fa-circle m-r-10 text-primary"></i>Mobiles</p>
-                        </li>
-                        <li class="list-inline-item">
-                            <p class="font-weight-bold"><i class="fa fa-circle m-r-10 text-info"></i>Tablets</p>
+                            <p class="font-weight-bold"><i class="fa fa-circle m-r-10 text-primary"></i>Год</p>
                         </li>
                     </ul>
                 </div>
@@ -101,7 +97,7 @@ get_header();
     <div class="row">
         <div class="col-sm-12">
             <div class="card-box">
-                <h6 class="m-t-0">Contacts</h6>
+                <h6 class="m-t-0">Пользователи</h6>
                 <div class="table-responsive">
                     <table class="table table-hover mails m-0 table table-actions-bar">
                         <thead>

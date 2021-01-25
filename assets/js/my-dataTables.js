@@ -1,7 +1,7 @@
 $(document).ready(function () {
     $('#busstops-table').DataTable({
         processing: true,
-        dom: '<"row"<"col-md"B><"col-md"l><"col-md"f>><"row"<"col-md-12 overflow-auto"rt>><"row"<"col-md"i><"col-md"p>>',
+        dom: '<"row"<"col-md"B><"col-md"l><"col-md"f>><"row"<"col-md-12 overflow-auto m-b-20"rt>><"row"<"col-md"i><"col-md"p>>',
         buttons: {
             buttons: ['copy', 'csv', 'excel']
         },
