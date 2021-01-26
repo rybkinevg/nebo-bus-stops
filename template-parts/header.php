@@ -1,12 +1,18 @@
 <?php
 
+require_once($_SERVER['DOCUMENT_ROOT'] . '/functions.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/db.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/config.php');
 
 if (!defined('INSTALLED')) header('Location: /install/install.php');
 
-require_once($_SERVER['DOCUMENT_ROOT'] . '/functions.php');
+if (!isset($_COOKIE['auth'])) header('Location: /sign-in.php');
 
 $page = get_page();
+
+$db = new db(HOST, USER, PASSWORD, DB_NAME);
+
+$user_info = get_user_info($db, $_COOKIE['id']);
 
 ?>
 
@@ -72,9 +78,9 @@ $page = get_page();
                             <div class="dropdown-item noti-title">
                                 <h6 class="m-0"><span class="float-right">
                                         <a href="" class="text-dark">
-                                            <small>Clear All</small>
+                                            <small>Очистить</small>
                                         </a>
-                                    </span>Notification
+                                    </span>Уведомления
                                 </h6>
                             </div>
 
@@ -83,39 +89,39 @@ $page = get_page();
                                 <a href="javascript:void(0);" class="dropdown-item notify-item">
                                     <div class="notify-icon bg-success"><i class="mdi mdi-comment-account-outline"></i>
                                     </div>
-                                    <p class="notify-details">Caleb Flakelar commented on Admin<small class="text-muted">1 min ago</small></p>
+                                    <p class="notify-details">Пока что не работают<small class="text-muted">1 min ago</small></p>
                                 </a>
 
                                 <!-- item-->
                                 <a href="javascript:void(0);" class="dropdown-item notify-item">
                                     <div class="notify-icon bg-info"><i class="mdi mdi-account-plus"></i></div>
-                                    <p class="notify-details">New user registered.<small class="text-muted">5 hours
+                                    <p class="notify-details">Пока что не работают<small class="text-muted">5 hours
                                             ago</small></p>
                                 </a>
 
                                 <!-- item-->
                                 <a href="javascript:void(0);" class="dropdown-item notify-item">
                                     <div class="notify-icon bg-danger"><i class="mdi mdi-heart"></i></div>
-                                    <p class="notify-details">Carlos Crouch liked <b>Admin</b><small class="text-muted">3 days ago</small></p>
+                                    <p class="notify-details">Пока что не работают<b>Admin</b><small class="text-muted">3 days ago</small></p>
                                 </a>
 
                                 <!-- item-->
                                 <a href="javascript:void(0);" class="dropdown-item notify-item">
                                     <div class="notify-icon bg-warning"><i class="mdi mdi-comment-account-outline"></i>
                                     </div>
-                                    <p class="notify-details">Caleb Flakelar commented on Admin<small class="text-muted">4 days ago</small></p>
+                                    <p class="notify-details">Пока что не работают<small class="text-muted">4 days ago</small></p>
                                 </a>
 
                                 <!-- item-->
                                 <a href="javascript:void(0);" class="dropdown-item notify-item">
                                     <div class="notify-icon bg-custom"><i class="mdi mdi-heart"></i></div>
-                                    <p class="notify-details">Carlos Crouch liked <b>Admin</b><small class="text-muted">13 days ago</small></p>
+                                    <p class="notify-details">Пока что не работают<b>Admin</b><small class="text-muted">13 days ago</small></p>
                                 </a>
                             </div>
 
                             <!-- All-->
                             <a href="javascript:void(0);" class="dropdown-item text-center text-primary notify-item notify-all">
-                                View all <i class="fi-arrow-right"></i>
+                                Показать все<i class="fi-arrow-right"></i>
                             </a>
 
                         </div>
@@ -123,7 +129,10 @@ $page = get_page();
 
                     <li class="dropdown notification-list">
                         <a class="nav-link dropdown-toggle waves-effect waves-light nav-user" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
-                            <img src="assets/images/users/avatar-1.jpg" alt="user" class="rounded-circle"> <span class="ml-1">Гость <i class="mdi mdi-chevron-down"></i> </span>
+                            <span class="ml-1">
+                                <?= $user_info['first_name'] . ' ' . mb_substr($user_info['last_name'], 0, 1) . '.' ?>
+                                <i class="mdi mdi-chevron-down"></i>
+                            </span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right profile-dropdown ">
                             <!-- item-->
@@ -137,17 +146,7 @@ $page = get_page();
                             </a>
 
                             <!-- item-->
-                            <a href="profile.php" class="dropdown-item notify-item">
-                                <i class="ti-settings"></i> <span>Настройки</span>
-                            </a>
-
-                            <!-- item-->
-                            <a href="profile.php" class="dropdown-item notify-item">
-                                <i class="ti-lock"></i> <span>Lock Screen</span>
-                            </a>
-
-                            <!-- item-->
-                            <a href="javascript:void(0);" class="dropdown-item notify-item">
+                            <a href="/includes/logout.php?exit=true" class="dropdown-item notify-item">
                                 <i class="ti-power-off"></i> <span>Выйти</span>
                             </a>
 
@@ -180,11 +179,17 @@ $page = get_page();
         <div class="left side-menu">
             <div class="user-details">
                 <div class="pull-left">
-                    <img src="assets/images/users/avatar-1.jpg" alt="" class="thumb-md rounded-circle">
+                    <div class="user-avatar">
+                        <?= get_user_avatar($user_info) ?>
+                    </div>
                 </div>
                 <div class="user-info">
-                    <a href="#">Гость</a>
-                    <p class="text-muted m-0">Сотрудник</p>
+                    <a href="/profile.php">
+                        <?= $user_info['first_name'] . ' ' . mb_substr($user_info['last_name'], 0, 1) . '.' ?>
+                    </a>
+                    <p class="text-muted m-0">
+                        <?= $user_info['position'] ?>
+                    </p>
                 </div>
             </div>
 

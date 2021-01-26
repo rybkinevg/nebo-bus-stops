@@ -3349,4 +3349,16 @@ h3.timeline-title {
 .page__busstops-base th {
   min-width: 203px;
 }
+
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #005cbf;
+  border-radius: 100%;
+  color: #fff;
+  font-size: 20px;
+}
 /*# sourceMappingURL=style.css.map */

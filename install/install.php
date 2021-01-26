@@ -20,6 +20,15 @@ if (isset($_POST['install'])) {
 
     $db->create_db($_POST['dbname']);
 
+    $db->close();
+
+    $db = new db(
+        $_POST['host'],
+        $_POST['user'],
+        $_POST['password'],
+        $_POST['dbname']
+    );
+
     $file = $_SERVER["DOCUMENT_ROOT"] . '/config.php';
 
     $current = file_get_contents($file);
@@ -39,8 +48,33 @@ if (isset($_POST['install'])) {
     // BUSSTOPS TABLE
     $current .= "define('BUSSTOPS_TABLE', '" . $_POST['maintable'] . "');" . PHP_EOL;
 
+    // USERS TABLE
+    $current .= "define('USERS_TABLE', 'users');" . PHP_EOL;
+
+    // USERS TABLE
+    $current .= "define('STATUSES_TABLE', 'statuses');" . PHP_EOL;
+
     // INSTALLED
     $current .= "define('INSTALLED', 'true');" . PHP_EOL;
+
+    $cols = "
+        ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        login VARCHAR(255) NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        registered DATETIME NOT NULL,
+        first_name VARCHAR(255) NOT NULL,
+        last_name VARCHAR(255) NOT NULL,
+        status INT(2) NULL DEFAULT '1',
+        position VARCHAR(255) NULL DEFAULT 'Сотрудник'
+    ";
+
+    $db->create('users', $cols);
+
+    $date = date("Y-m-d H:i:s");
+
+    $db->insert('users', "NULL, '{$_POST['user_login']}', '{$_POST['user_password']}', '{$date}', '{$_POST['user_first_name']}', '{$_POST['user_last_name']}', '2', DEFAULT");
+
+    $db->close();
 
     file_put_contents($file, $current);
 
@@ -120,6 +154,36 @@ if (isset($_POST['install'])) {
                                         </div>
                                     </div>
 
+                                    <h6 class="m-t-0 m-b-20 header-title font-16"><b>Настройки профиля</b></h6>
+
+                                    <div class="form-group row">
+                                        <label class="col-md-6 col-form-label" for="user_login">Придумайте логин</label>
+                                        <div class="col-md">
+                                            <input type="text" id="user_login" name="user_login" class="form-control" value="" placeholder="Логин">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-md-6 col-form-label" for="user_password">Придумайте пароль</label>
+                                        <div class="col-md">
+                                            <input type="text" id="user_password" name="user_password" class="form-control" value="" placeholder="Пароль">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-md-6 col-form-label" for="user_first_name">Ваше имя</label>
+                                        <div class="col-md">
+                                            <input type="text" id="user_first_name" name="user_first_name" class="form-control" value="" placeholder="Имя">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-md-6 col-form-label" for="user_last_name">Ваша фамилия</label>
+                                        <div class="col-md">
+                                            <input type="text" id="user_last_name" name="user_last_name" class="form-control" value="" placeholder="Фамилия">
+                                        </div>
+                                    </div>
+
                                     <div class="form-group account-btn text-center m-t-10">
                                         <div class="col-12">
                                             <button class="btn btn-lg btn-primary btn-block" name="install" type="submit">Установить</button>
@@ -131,8 +195,8 @@ if (isset($_POST['install'])) {
                             <?php else : ?>
 
                                 <h6 class="m-t-0 m-b-20 header-title font-16"><b>Настройки успешно произведены</b></h6>
-                                <p>Все необходимые настройки произведены, доступ к страницам сайта восстановлен.</p>
-                                <p><a href="/" class="btn btn-primary">На главную страницу</a></p>
+                                <p>Все необходимые настройки произведены, авторизуйтесь на сайте, чтобы приступить к работе.</p>
+                                <p><a href="/sign-in.php?login=<?= $_POST['user_login'] ?>&pass=<?= $_POST['user_password'] ?>" class="btn btn-primary">Авторизоваться</a></p>
 
                             <?php endif; ?>
 

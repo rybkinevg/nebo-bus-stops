@@ -17,6 +17,12 @@ class db
         $this->dbname     = $dbname;
     }
 
+    public function close()
+    {
+
+        $this->connection->close();
+    }
+
     public function create_db($dbname)
     {
 
@@ -84,7 +90,7 @@ class db
         }
     }
 
-    public function select($tablename, $print = false, $what = '*', $where = null)
+    public function select($tablename, $print = false, $what = '*', $where = false)
     {
         if ($where) {
 
@@ -122,7 +128,7 @@ class db
             $this->connection->close();
         } else {
 
-            die("Ошибка: выбрана неверная таблица");
+            return false;
         }
     }
 

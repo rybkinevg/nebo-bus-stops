@@ -1,12 +1,12 @@
 <?php
 
 require_once($_SERVER['DOCUMENT_ROOT'] . '/functions.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/config.php');
+
+get_header();
+
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/db.php');
 
 $db = new db(HOST, USER, PASSWORD, DB_NAME);
-
-get_header();
 
 ?>
 
@@ -17,7 +17,6 @@ get_header();
             <h4 class="header-title m-t-0 m-b-20">Welcome !</h4>
         </div>
     </div>
-
 
     <div class="row">
         <div class="col-sm-12">
@@ -37,9 +36,9 @@ get_header();
                         <div class="widget-inline-box text-center">
                             <h3 class="m-t-10">
                                 <i class="text-custom ti-shopping-cart"></i>
-                                <b>7841</b>
+                                <b>???</b>
                             </h3>
-                            <p class="text-muted">Всего купленных сотановок</p>
+                            <p class="text-muted">Всего купленных остановок</p>
                         </div>
                     </div>
 
@@ -47,7 +46,7 @@ get_header();
                         <div class="widget-inline-box text-center">
                             <h3 class="m-t-10">
                                 <i class="text-info ti-user"></i>
-                                <b>6521</b>
+                                <b><?= $db->count(USERS_TABLE) ?></b>
                             </h3>
                             <p class="text-muted">Всего пользователей</p>
                         </div>
@@ -58,7 +57,6 @@ get_header();
         </div>
     </div>
     <!--end row -->
-
 
     <div class="row">
         <div class="col-lg-6">
@@ -102,188 +100,42 @@ get_header();
                     <table class="table table-hover mails m-0 table table-actions-bar">
                         <thead>
                             <tr>
-                                <th style="min-width: 95px;">
-                                    <div class="checkbox checkbox-primary checkbox-single m-r-15">
-                                        <input id="action-checkbox" type="checkbox">
-                                        <label for="action-checkbox"></label>
-                                    </div>
-                                </th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Products</th>
-                                <th>Start Date</th>
+                                <th>Имя</th>
+                                <th>Дата регистрации</th>
+                                <th>Должность</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            <tr>
-                                <td>
-                                    <div class="checkbox checkbox-primary m-r-15">
-                                        <input id="checkbox2" type="checkbox">
-                                        <label for="checkbox2"></label>
-                                    </div>
+                            <?php
 
-                                    <img src="assets/images/users/avatar-2.jpg" alt="contact-img" title="contact-img" class="rounded-circle thumb-sm" />
-                                </td>
+                            $users = $db->select(USERS_TABLE, false, '*');
 
-                                <td>
-                                    Tomaslau
-                                </td>
+                            foreach ($users as $user) {
 
-                                <td>
-                                    <a href="#" class="text-muted">tomaslau@dummy.com</a>
-                                </td>
+                            ?>
 
-                                <td>
-                                    <b><a href="" class="text-dark"><b>356</b></a> </b>
-                                </td>
+                                <tr>
 
-                                <td>
-                                    01/11/2003
-                                </td>
+                                    <td>
+                                        <?= $user['first_name'] . ' ' . $user['last_name'] ?>
+                                    </td>
 
-                            </tr>
+                                    <td>
+                                        <?= $user['registered'] ?>
+                                    </td>
 
-                            <tr>
-                                <td>
-                                    <div class="checkbox checkbox-primary m-r-15">
-                                        <input id="checkbox1" type="checkbox">
-                                        <label for="checkbox1"></label>
-                                    </div>
+                                    <td>
+                                        <?= $user['position'] ?>
+                                    </td>
 
-                                    <img src="assets/images/users/avatar-1.jpg" alt="contact-img" title="contact-img" class="rounded-circle thumb-sm" />
-                                </td>
+                                </tr>
 
-                                <td>
-                                    Chadengle
-                                </td>
+                            <?php
 
-                                <td>
-                                    <a href="#" class="text-muted">chadengle@dummy.com</a>
-                                </td>
+                            }
 
-                                <td>
-                                    <b><a href="" class="text-dark"><b>568</b></a> </b>
-                                </td>
-
-                                <td>
-                                    01/11/2003
-                                </td>
-
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="checkbox checkbox-primary m-r-15">
-                                        <input id="checkbox3" type="checkbox">
-                                        <label for="checkbox3"></label>
-                                    </div>
-
-                                    <img src="assets/images/users/avatar-3.jpg" alt="contact-img" title="contact-img" class="rounded-circle thumb-sm" />
-                                </td>
-
-                                <td>
-                                    Stillnotdavid
-                                </td>
-
-                                <td>
-                                    <a href="#" class="text-muted">stillnotdavid@dummy.com</a>
-                                </td>
-                                <td>
-                                    <b><a href="" class="text-dark"><b>201</b></a> </b>
-                                </td>
-
-                                <td>
-                                    12/11/2003
-                                </td>
-
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="checkbox checkbox-primary m-r-15">
-                                        <input id="checkbox4" type="checkbox">
-                                        <label for="checkbox4"></label>
-                                    </div>
-
-                                    <img src="assets/images/users/avatar-4.jpg" alt="contact-img" title="contact-img" class="rounded-circle thumb-sm" />
-                                </td>
-
-                                <td>
-                                    Kurafire
-                                </td>
-
-                                <td>
-                                    <a href="#" class="text-muted">kurafire@dummy.com</a>
-                                </td>
-
-                                <td>
-                                    <b><a href="" class="text-dark"><b>56</b></a> </b>
-                                </td>
-
-                                <td>
-                                    14/11/2003
-                                </td>
-
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="checkbox checkbox-primary m-r-15">
-                                        <input id="checkbox5" type="checkbox">
-                                        <label for="checkbox5"></label>
-                                    </div>
-
-                                    <img src="assets/images/users/avatar-5.jpg" alt="contact-img" title="contact-img" class="rounded-circle thumb-sm" />
-                                </td>
-
-                                <td>
-                                    Shahedk
-                                </td>
-
-                                <td>
-                                    <a href="#" class="text-muted">shahedk@dummy.com</a>
-                                </td>
-
-                                <td>
-                                    <b><a href="" class="text-dark"><b>356</b></a> </b>
-                                </td>
-
-                                <td>
-                                    20/11/2003
-                                </td>
-
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <div class="checkbox checkbox-primary m-r-15">
-                                        <input id="checkbox6" type="checkbox">
-                                        <label for="checkbox6"></label>
-                                    </div>
-
-                                    <img src="assets/images/users/avatar-6.jpg" alt="contact-img" title="contact-img" class="rounded-circle thumb-sm" />
-                                </td>
-
-                                <td>
-                                    Adhamdannaway
-                                </td>
-
-                                <td>
-                                    <a href="#" class="text-muted">adhamdannaway@dummy.com</a>
-                                </td>
-
-                                <td>
-                                    <b><a href="" class="text-dark"><b>956</b></a> </b>
-                                </td>
-
-                                <td>
-                                    24/11/2003
-                                </td>
-
-                            </tr>
-
-
+                            ?>
                         </tbody>
                     </table>
                 </div>

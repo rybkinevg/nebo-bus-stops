@@ -9,6 +9,9 @@
     const bsDelete = $('#js-db-delete-busstops');
 
     bsCreate.on('click', function () {
+
+        $(this).text('Ожидайте...');
+
         $.ajax({
             url: './includes/db_busstops.php',
             type: 'POST',
@@ -33,6 +36,9 @@
     });
 
     bsImport.on('click', function () {
+
+        $(this).text('Ожидайте...');
+
         $.ajax({
             url: './includes/db_busstops.php',
             type: 'POST',
@@ -41,6 +47,8 @@
             },
             success: function (respond, status, jqXHR) {
                 if (respond.success) {
+
+                    $(this).text('Импортировать');
 
                     location.reload();
                 } else {
@@ -57,6 +65,9 @@
     });
 
     bsDelete.on('click', function () {
+
+        $(this).text('Ожидайте...');
+
         $.ajax({
             url: './includes/db_busstops.php',
             type: 'POST',
@@ -65,6 +76,8 @@
             },
             success: function (respond, status, jqXHR) {
                 if (respond.success) {
+
+                    $(this).text('Удалить');
 
                     location.reload();
                 } else {

@@ -135,3 +135,30 @@ function check_table(db $db, $tablename)
 
     return (empty($db->check_cols($tablename))) ? false : true;
 }
+
+function get_user_info(db $db, $id)
+{
+
+    $user = [];
+
+    $check_user = $db->select(USERS_TABLE, false, '*', "`ID` = '{$id}'");
+
+    if ($check_user) {
+
+        $user = $check_user[0];
+
+        return $user;
+    }
+
+    return false;
+}
+
+
+function get_user_avatar(array $user_info)
+{
+
+    $fname = (!empty($user_info['first_name'])) ? mb_substr($user_info['first_name'], 0, 1) : '';
+    $lname = (!empty($user_info['last_name'])) ? mb_substr($user_info['last_name'], 0, 1) : '';
+
+    return $fname . $lname;
+}

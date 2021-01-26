@@ -4,11 +4,15 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/functions.php');
 
 get_header();
 
+$db = new db(HOST, USER, PASSWORD, DB_NAME);
+
+$user_info = get_user_info($db, $_COOKIE['id']);
+
 ?>
 
 <div class="container-fluid">
 
-    <div class="row">
+    <!-- <div class="row">
         <div class="col-md-12">
             <div class="p-0 text-center">
                 <div class="member-card">
@@ -32,21 +36,21 @@ get_header();
 
                 </div>
 
-            </div> <!-- end card-box -->
+            </div>
 
-        </div> <!-- end col -->
-    </div> <!-- end row -->
+        </div>
+    </div> -->
 
     <div class="m-t-30">
         <ul class="nav nav-tabs tabs-bordered">
             <li class="nav-item">
                 <a href="#home-b1" data-toggle="tab" aria-expanded="false" class="nav-link active">
-                    Profile
+                    Профиль
                 </a>
             </li>
             <li class="nav-item">
                 <a href="#profile-b1" data-toggle="tab" aria-expanded="true" class="nav-link">
-                    Settings
+                    Настройки
                 </a>
             </li>
         </ul>
@@ -58,28 +62,36 @@ get_header();
                         <!-- Personal-Information -->
                         <div class="panel panel-default panel-fill">
                             <div class="panel-heading">
-                                <h3 class="panel-title">Personal Information</h3>
+                                <h3 class="panel-title">Персональная информация</h3>
                             </div>
                             <div class="panel-body">
                                 <div class="m-b-20">
-                                    <strong>Full Name</strong>
+                                    <strong>Полное имя</strong>
                                     <br>
-                                    <p class="text-muted">Johnathan Deo</p>
+                                    <p class="text-muted">
+                                        <?= $user_info['first_name'] . ' ' . $user_info['last_name'] ?>
+                                    </p>
                                 </div>
                                 <div class="m-b-20">
-                                    <strong>Mobile</strong>
+                                    <strong>Дата и время регистрации</strong>
                                     <br>
-                                    <p class="text-muted">(123) 123 1234</p>
+                                    <p class="text-muted">
+                                        <?= date("d.m.Y H:i", strtotime($user_info['registered'])) ?>
+                                    </p>
                                 </div>
                                 <div class="m-b-20">
-                                    <strong>Email</strong>
+                                    <strong>Должность</strong>
                                     <br>
-                                    <p class="text-muted">johnath@domain.com</p>
+                                    <p class="text-muted">
+                                        <?= $user_info['position'] ?>
+                                    </p>
                                 </div>
                                 <div class="about-info-p m-b-0">
-                                    <strong>Location</strong>
+                                    <strong>Права</strong>
                                     <br>
-                                    <p class="text-muted">USA</p>
+                                    <p class="text-muted">
+                                        <?= ($user_info['status'] == 2) ? 'Администраторские' : 'Пользовательские' ?>
+                                    </p>
                                 </div>
                             </div>
                         </div>
