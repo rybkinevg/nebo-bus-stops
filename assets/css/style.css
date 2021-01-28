@@ -3350,6 +3350,10 @@ h3.timeline-title {
   min-width: 203px;
 }
 
+.page__busstops-base tr {
+  min-height: 88px;
+}
+
 .user-avatar {
   width: 48px;
   height: 48px;

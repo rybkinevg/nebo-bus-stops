@@ -4,6 +4,11 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/functions.php');
 
 get_header();
 
+// Подключение необходимых библиотек, настроек и классов
+require_once($_SERVER['DOCUMENT_ROOT'] . '/config.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/db.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/vendor/SimpleXLSX.php');
+
 ?>
 
 <div class="container-fluid">

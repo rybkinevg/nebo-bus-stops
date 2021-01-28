@@ -76,8 +76,7 @@ function enqueue_scripts($page)
         $scripts['yandex-map'] = get_path(true) . "/assets/js/yandex-map.js";
     } elseif ($page == 'database') {
 
-        //$scripts['sweet-alert2'] = get_path(true) . "/assets/plugins/sweet-alert2/sweetalert2.min.js";
-        //$scripts['sweet-alert-init'] = get_path(true) . "/assets/pages/jquery.sweet-alert.init.js";
+        $scripts['bootstrap-filestyle'] = get_path(true) . "/assets/plugins/bootstrap-filestyle/js/bootstrap-filestyle.min.js";
         $scripts['database'] = get_path(true) . "/assets/js/database.js";
     } elseif ($page == 'busstops-base') {
 

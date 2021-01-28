@@ -57,7 +57,7 @@ if (isset($_POST['install'])) {
     // INSTALLED
     $current .= "define('INSTALLED', 'true');" . PHP_EOL;
 
-    $cols = "
+    $user_cols = "
         ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         login VARCHAR(255) NOT NULL,
         password VARCHAR(255) NOT NULL,
@@ -68,11 +68,24 @@ if (isset($_POST['install'])) {
         position VARCHAR(255) NULL DEFAULT 'Сотрудник'
     ";
 
-    $db->create('users', $cols);
+    $db->create('users', $user_cols);
 
     $date = date("Y-m-d H:i:s");
 
     $db->insert('users', "NULL, '{$_POST['user_login']}', '{$_POST['user_password']}', '{$date}', '{$_POST['user_first_name']}', '{$_POST['user_last_name']}', '2', DEFAULT");
+
+    $statuses_cols = "
+        ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        date_sold VARCHAR(255) NOT NULL,
+        g_id VARCHAR(255) NOT NULL,
+        advertiser VARCHAR(255) NULL,
+        brand VARCHAR(255) NULL,
+        index_rk VARCHAR(255) NULL,
+        buyer VARCHAR(255) NULL,
+        sold VARCHAR(255) NULL
+    ";
+
+    $db->create('statuses', $statuses_cols);
 
     $db->close();
 

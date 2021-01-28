@@ -458,7 +458,7 @@ else if ($_POST['action'] === 'import-busstops') {
     }
 }
 
-// Импорт в таблицу
+// Удаление таблицы
 else if ($_POST['action'] === 'delete-busstops') {
 
     $db->drop($tablename);
