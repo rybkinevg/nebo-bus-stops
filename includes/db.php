@@ -182,4 +182,22 @@ class db
             die("Ошибка при добавлении данных в таблицу {$tablename}: " . $this->connection->error);
         }
     }
+
+    public function delete($tablename, $where = false)
+    {
+        if ($where) {
+
+            $where = " WHERE $where";
+        }
+
+        $sql_delete = "DELETE FROM `{$tablename}`{$where}";
+
+        if ($this->connection->query($sql_delete) === TRUE) {
+
+            return true;
+        } else {
+
+            die("Ошибка при добавлении данных в таблицу {$tablename}: " . $this->connection->error);
+        }
+    }
 }

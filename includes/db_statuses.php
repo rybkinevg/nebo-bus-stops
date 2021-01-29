@@ -52,7 +52,7 @@ $uploaddir = $_SERVER['DOCUMENT_ROOT'] . '/files/statuses_imports/';
 
 $uploadfile = $uploaddir . basename($_FILES['upload-file']['name']);
 
-if (empty($_FILES['upload-file']['error'])) {
+if (isset($_FILES['upload-file']) && empty($_FILES['upload-file']['error'])) {
 
     $uploaded = move_uploaded_file($_FILES['upload-file']['tmp_name'], $uploadfile);
 
@@ -127,6 +127,21 @@ if (empty($_FILES['upload-file']['error'])) {
 if ($_POST['action'] === 'delete-busstops') {
 
     $db->drop($tablename);
+
+    $response = [
+        'success' => true,
+        'message' => 'Таблица успешно удалена'
+    ];
+
+    header('Content-Type: application/json');
+
+    echo json_encode($response);
+}
+
+// Удаление таблицы
+if ($_POST['action'] === 'delete-statuses-for-month') {
+
+    $db->delete($tablename, "`date_sold` = '{$_POST['date']}'");
 
     $response = [
         'success' => true,

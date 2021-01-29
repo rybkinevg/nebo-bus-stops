@@ -228,8 +228,8 @@ if ($user_info['status'] != '2') {
                             <p class="text-success">Таблица существует</p>
                             <p>Найдено <strong><?= $db->count(BUSSTOPS_TABLE) ?></strong> строк</p>
                             <?php if ($db->count(BUSSTOPS_TABLE, "*", "`latitude` = 'NULL' AND `longitude` = 'NULL' OR `address_near` = 'NULL'") > 0) : ?>
-                                <p>Найдено <strong><?= $db->count(BUSSTOPS_TABLE, "*", "`latitude` = 'NULL' AND `longitude` = 'NULL'") ?></strong> сторон без координат</p>
                                 <p>Найдено <strong><?= $db->count(BUSSTOPS_TABLE, "*", "`address_near` = 'NULL'") ?></strong> сторон без ближайших адресов</p>
+                                <p>Найдено <strong><?= $db->count(BUSSTOPS_TABLE, "*", "`latitude` = 'NULL' AND `longitude` = 'NULL'") ?></strong> сторон без координат</p>
                                 <button id="js-db-coods-busstops" type="button" class="btn btn-primary m-t-10">Добавить координаты</button>
                             <?php endif; ?>
                             <button id="js-db-import-busstops" type="button" class="btn btn-primary m-t-10">Импортировать</button>
@@ -267,14 +267,22 @@ if ($user_info['status'] != '2') {
                         <div class="panel-body">
                             <p class="text-success">Таблица существует</p>
                             <p>Найдено <strong><?= $db->count(STATUSES_TABLE) ?></strong> строк</p>
-                            <?php if ($db->count(STATUSES_TABLE, "*", "`date_sold` = '2021-01'") > 0) : ?>
+                            <?php if ($db->count(STATUSES_TABLE, "*") > 0) : ?>
                                 <?php
 
                                 foreach ($monthArr as $key => $value) {
 
                                     if ($db->count(STATUSES_TABLE, "*", "`date_sold` = '2021-{$key}'")) {
 
-                                        echo "<p>Найдено <strong>" . $db->count(STATUSES_TABLE, "*", "`date_sold` = '2021-{$key}'") . "</strong> купленных сторон за {$value} 2021</p>";
+                                        echo "<div style='margin: 15px 0;'>";
+
+                                        echo "<h6>{$value} 2021</h6>";
+
+                                        echo "<p>Найдено <strong>" . $db->count(STATUSES_TABLE, "*", "`date_sold` = '2021-{$key}'") . "</strong> купленных сторон</p>";
+
+                                        echo "<button data-date='2021-{$key}' type='button' class='js-db-delete-statuses-for-month btn btn-danger m-t-10'>Удалить данные за {$value}</button>";
+
+                                        echo "</div>";
                                     }
                                 }
 
