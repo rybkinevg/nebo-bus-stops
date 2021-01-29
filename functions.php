@@ -76,6 +76,7 @@ function enqueue_scripts($page)
         $scripts['yandex-map'] = get_path(true) . "/assets/js/yandex-map.js";
     } elseif ($page == 'database') {
 
+        $scripts['api-yandex-maps'] = "https://api-maps.yandex.ru/2.1/?lang=ru-RU&apikey=5571489d-8573-4ab6-8f61-558fd0453a57";
         $scripts['bootstrap-filestyle'] = get_path(true) . "/assets/plugins/bootstrap-filestyle/js/bootstrap-filestyle.min.js";
         $scripts['database'] = get_path(true) . "/assets/js/database.js";
     } elseif ($page == 'busstops-base') {

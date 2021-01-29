@@ -57,13 +57,14 @@ function init() {
 
                     // Изменение отображения на карте
                     objectManager.objects.setObjectOptions(id, {
-                        preset: 'islands#redIcon'
+                        preset: 'islands#yellowIcon'
                     });
 
                     // Изменение свойств объекта, чтобы сохранить состояние, так как, меняя напрямую, состояние не сохраняется
                     objectManager.objects.setObjectProperties(id, {
                         disabled: 'disabled',
-                        btnText: 'Добавлено'
+                        btnText: 'Добавлено',
+                        status: 'Выбранные стороны'
                     });
                 }
 
@@ -95,9 +96,68 @@ function init() {
         }
     );
 
+    // Создадим 5 пунктов выпадающего списка.
+    var listBoxItems = ['Свободные стороны', 'Проданные стороны', 'Импортированные стороны', 'Выбранные стороны']
+        .map(function (title) {
+            return new ymaps.control.ListBoxItem({
+                data: {
+                    content: title
+                },
+                state: {
+                    selected: true
+                }
+            })
+        }),
+        reducer = function (filters, filter) {
+            filters[filter.data.get('content')] = filter.isSelected();
+            return filters;
+        },
+        // Теперь создадим список, содержащий 5 пунктов.
+        listBoxControl = new ymaps.control.ListBox({
+            data: {
+                content: 'Фильтр',
+                title: 'Фильтр'
+            },
+            items: listBoxItems,
+            state: {
+                // Признак, развернут ли список.
+                expanded: true,
+                filters: listBoxItems.reduce(reducer, {})
+            }
+        });
+
+    myMap.controls.add(listBoxControl);
+
+    // Добавим отслеживание изменения признака, выбран ли пункт списка.
+    listBoxControl.events.add(['select', 'deselect'], function (e) {
+        var listBoxItem = e.get('target');
+        var filters = ymaps.util.extend({}, listBoxControl.state.get('filters'));
+        filters[listBoxItem.data.get('content')] = listBoxItem.isSelected();
+        listBoxControl.state.set('filters', filters);
+    });
+
+    var filterMonitor = new ymaps.Monitor(listBoxControl.state);
+    filterMonitor.add('filters', function (filters) {
+        // Применим фильтр.
+        objectManager.setFilter(getFilterFunction(filters));
+    });
+
+    function getFilterFunction(categories) {
+        return function (obj) {
+            var content = obj.properties.status;
+            return categories[content]
+        }
+    }
+
     dbPoints.forEach((el) => {
 
         if (el.latitude != 'NULL' && el.longitude != 'NULL') {
+
+            let color = (el.statuses_g_id == null) ? "islands#darkGreenIcon" : "islands#redIcon";
+
+            let dotColor = (el.statuses_g_id == null) ? "green" : "red";
+
+            let status = (el.statuses_g_id == null) ? "Свободные стороны" : "Проданные стороны";
 
             objectManager.add(
                 {
@@ -109,15 +169,16 @@ function init() {
                     },
                     properties: {
                         balloonContentHeader: `Остановка ${el.invent_id} <b>${el.side}</b>`,
-                        balloonContentBody: `<p>ГИД: ${el.g_id}</p><p>Адрес: ${(el.address_near != 'NULL') ? el.address_near : 'Не указан'}</p><p>Сторона: ${el.side}</p><p>Направление: ${el.direction}</p><p>Прайс (с НДС): ${el.nds_rate}</p>`,
+                        balloonContentBody: `<p>ГИД: ${el.g_id}</p><p>Адрес: ${(el.address_near != 'NULL') ? el.address_near : 'Не указан'}</p><p>Сторона: ${el.side}</p><p>Направление: ${el.direction}</p><p>Рекламодатель: ${(el.advertiser && el.advertiser !== 'NULL') ? el.advertiser : 'Не указано'}</p><p>Бренд: ${(el.brand && el.brand !== 'NULL') ? el.brand : 'Не указано'}</p>`,
                         index: el.ID,
                         g_id: el.g_id,
                         canDownload: true,
+                        status: status,
                         btnText: 'Добавить в выгрузку',
-                        clusterCaption: `${el.invent_id} <b>${el.side}</b>`
+                        clusterCaption: `<div class="yandex-map-left-col-list-item"><span class="title">${el.invent_id} <b>${el.side}</b></span><span class="dot dot-${dotColor}"></span></div>`
                     },
                     options: {
-                        preset: "islands#violetDotIcon"
+                        preset: color
                     }
                 }
             );
@@ -143,10 +204,11 @@ function init() {
                             balloonContentBody: `<p>Адрес: ${(el.address) ? el.address : 'Не указан'}</p><p>Координаты: ${(el.latitude && el.longitude) ? el.latitude + ', ' + el.longitude : 'Не указаны'}</p><p>Данная остановка была импортирована через "Добавить метки"</p>`,
                             index: 'none',
                             canDownload: false,
-                            clusterCaption: 'Остановка'
+                            clusterCaption: 'Остановка',
+                            status: 'Импортированные стороны'
                         },
                         options: {
-                            preset: "islands#blueDotIcon"
+                            preset: "islands#nightIcon"
                         }
                     }
                 );
@@ -254,6 +316,8 @@ function init() {
     const btnDownload = $('.js-download-download');
     const downloadList = $('.download-list');
     const downloadMessage = $('#download-footer');
+    const loadStatusesMessage = $('#load-statuses-footer');
+    const btnLoadStatuses = $('.js-load-statuses');
 
     function appendListItems(list) {
 
@@ -295,5 +359,28 @@ function init() {
                 }
             });
         }
+    });
+
+    // Форма статусов
+    btnLoadStatuses.on('click', function (e) {
+
+        e.preventDefault();
+
+        $.ajax({
+            url: './includes/load_statuses.php',
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            data: new FormData(document.getElementById('load_statuses_form')),
+            success: function (respond, status, jqXHR) {
+                if (respond) {
+
+                    $(loadStatusesMessage).html(`<p> Выбранные статусы готовы, нажмите на кнопку "Обновить карту", чтобы изменения вступили в силу, если статусы не изменились, обновите страницу ещё раз.</p> <a class="btn btn-default" href=${respond}>Обновить карту</a>`);
+                }
+            },
+            error: function (jqXHR, status, errorThrown) {
+                console.log('Ошибка AJAX запроса: ' + status);
+            }
+        });
     });
 }

@@ -63,11 +63,61 @@ $file = ($_GET['file']) ? $_GET['file'] : false;
             </div><!-- /.modal-dialog -->
         </div>
 
-        <div class="col-sm-6">
+        <div id="statusesModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="statusesModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="statusesModalLabel">Статусы сторон</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="load_statuses_form">
+                            <p>При заходе на карту автоматически выводятся статусы текущего месяца и года, чтобы изменить отображение, выберите месяц и год ниже</p>
+                            <p>Но, первым делом, вам нужно убедится, что <ins>статусы выбранного вами месяца есть в базе данных</ins></p>
+                            <p><strong>Сейчас выбраны статусы за <?= $_COOKIE['statuses']; ?></strong></p>
+                            <div class="form-group">
+                                <label class="control-label">Выберите месяц статусов</label>
+                                <select class="form-control" name="month">
+                                    <option value="01">Январь</option>
+                                    <option value="02">Февраль</option>
+                                    <option value="03">Март</option>
+                                    <option value="04">Апрель</option>
+                                    <option value="05">Май</option>
+                                    <option value="06">Июнь</option>
+                                    <option value="07">Июль</option>
+                                    <option value="08">Август</option>
+                                    <option value="09">Сентябрь</option>
+                                    <option value="10">Октябрь</option>
+                                    <option value="11">Ноябрь</option>
+                                    <option value="12">Декабрь</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Выберите год статусов</label>
+                                <select class="form-control" name="year">
+                                    <option value="<?= date('Y'); ?>"><?= date('Y'); ?></option>
+                                    <option value="<?= date('Y') + 1; ?>"><?= date('Y') + 1; ?></option>
+                                </select>
+                            </div>
+                            <div class="form-group text-right m-0">
+                                <button class="btn btn-primary waves-effect waves-light js-load-statuses" type="submit">
+                                    Загрузить
+                                </button>
+                                <button type="reset" class="btn btn-default waves-effect m-l-5">
+                                    Очистить
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="load-statuses-footer" class="modal-footer"></div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+
+        <div class="col-sm-4">
             <div class="card-box">
                 <div class="card__info">
-                    <h6 class="text-muted font-13 m-t-0 text-uppercase">Импорт точек на карту</h6>
-                    <p class="m-0">Добавляет импортированные точки на карту, помечая их другим цветом</p>
+                    <h6 class="text-muted font-13 m-0 text-uppercase">Импорт точек на карту</h6>
                 </div>
                 <div class="card__btn">
                     <button type="button" class="btn btn-sm btn-primary waves-effect waves-light" data-toggle="modal" data-target="#importModal"><i class="ti-import"></i></button>
@@ -75,11 +125,10 @@ $file = ($_GET['file']) ? $_GET['file'] : false;
             </div>
         </div>
 
-        <div class="col-sm-6">
+        <div class="col-sm-4">
             <div class="card-box">
                 <div class="card__info">
-                    <h6 class="text-muted font-13 m-t-0 text-uppercase">Экспорт выбранных точек</h6>
-                    <p class="m-0">Возможность скачивания выбранных точек, добавленных для выгрузки</p>
+                    <h6 class="text-muted font-13 m-0 text-uppercase">Экспорт выбранных точек</h6>
                 </div>
                 <div class="card__btn">
                     <button type="button" class="btn btn-sm btn-primary waves-effect waves-light" data-toggle="modal" data-target="#exportModal"><i class="ti-export"></i></button>
@@ -87,6 +136,24 @@ $file = ($_GET['file']) ? $_GET['file'] : false;
             </div>
         </div>
 
+        <div class="col-sm-4">
+            <div class="card-box">
+                <div class="card__info">
+                    <h6 class="text-muted font-13 m-0 text-uppercase">Статусы сторон</h6>
+                </div>
+                <div class="card__btn">
+                    <button type="button" class="btn btn-sm btn-primary waves-effect waves-light" data-toggle="modal" data-target="#statusesModal"><i class="ti-stats-up"></i></button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row m-b-20">
+        <div class="col-3" style="display: flex; align-items: center; justify-content: center;"><span style="width: 15px; height: 15px; margin-right: 15px; border-radius: 100%; display: inline-block; background: green;"></span>Зеленый - свободные</div>
+        <div class="col-3" style="display: flex; align-items: center; justify-content: center;"><span style="width: 15px; height: 15px; margin-right: 15px; border-radius: 100%; display: inline-block; background: red;"></span>Красный - проданные</div>
+        <div class="col-3" style="display: flex; align-items: center; justify-content: center;"><span style="width: 15px; height: 15px; margin-right: 15px; border-radius: 100%; display: inline-block; background: darkblue;"></span>Синий - импортированные</div>
+        <div class="col-3" style="display: flex; align-items: center; justify-content: center;"><span style="width: 15px; height: 15px; margin-right: 15px; border-radius: 100%; display: inline-block; background: yellow;"></span>Желтый - выбранные для выгрузки</div>
     </div>
 
     <div class="row map-row">

@@ -18,6 +18,9 @@ $keys = [
     "date_sold" => [
         "name" => "Дата"
     ],
+    "user_id" => [
+        "name" => "Кто выбрал"
+    ],
     "g_id" => [
         "name" => "Коды сторон"
     ],
@@ -101,7 +104,7 @@ if (empty($_FILES['upload-file']['error'])) {
 
                     $clear_data = mb_substr($data, 0, -2);
 
-                    $db->insert($tablename, "NULL, '$date', {$clear_data}");
+                    $db->insert($tablename, "NULL, '$date', DEFAULT, {$clear_data}");
                 }
             }
 

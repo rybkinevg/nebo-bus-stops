@@ -45,12 +45,28 @@ function generate_keys_to_table($keys)
     return $output;
 }
 
+function generate_keys_to_hide_links($keys)
+{
+
+    $output = '';
+
+    for ($i = 0; $i < count($keys); $i++) {
+
+        $output .= "<a class='toggle-vis' data-column='{$i}'>{$keys[$i]}</a> - ";
+    }
+
+    return $output;
+}
+
 ?>
 
 <div class="container-fluid">
     <h1 class="m-b-20">База остановок</h1>
     <div class="row">
         <div class="col-sm-12">
+            <div class="m-b-20">
+                <?= generate_keys_to_hide_links($keys) ?>
+            </div>
             <table id="busstops-table" class="table table-striped table-bordered dataTable">
                 <thead>
                     <tr>

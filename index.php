@@ -36,7 +36,7 @@ $db = new db(HOST, USER, PASSWORD, DB_NAME);
                         <div class="widget-inline-box text-center">
                             <h3 class="m-t-10">
                                 <i class="text-custom ti-shopping-cart"></i>
-                                <b>???</b>
+                                <b><?= $db->count(STATUSES_TABLE) ?></b>
                             </h3>
                             <p class="text-muted">Всего купленных остановок</p>
                         </div>

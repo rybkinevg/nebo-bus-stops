@@ -4,7 +4,7 @@
 
 define('HOST', 'localhost');
 define('USER', 'root');
-define('PASSWORD', 'root');
+define('PASSWORD', '');
 define('DB_NAME', 'nebo-busstops-db');
 define('BUSSTOPS_TABLE', 'busstops');
 define('USERS_TABLE', 'users');

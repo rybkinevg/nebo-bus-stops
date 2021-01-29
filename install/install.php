@@ -77,6 +77,7 @@ if (isset($_POST['install'])) {
     $statuses_cols = "
         ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         date_sold VARCHAR(255) NOT NULL,
+        user_id INT NULL DEFAULT 1,
         g_id VARCHAR(255) NOT NULL,
         advertiser VARCHAR(255) NULL,
         brand VARCHAR(255) NULL,

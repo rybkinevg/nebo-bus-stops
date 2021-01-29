@@ -34,7 +34,8 @@
 }
 
 #upload-footer,
-#download-footer {
+#download-footer,
+#load-statuses-footer {
     display: flex;
     flex-direction: column;
 }
@@ -64,4 +65,32 @@
     background: #000;
     width: 100%;
     margin-bottom: 10px;
+}
+
+.ymaps-2-1-78-b-cluster-tabs__menu-item-text {
+    width: 100%;
+}
+
+.yandex-map-left-col-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.yandex-map-left-col-list-item span {
+    display: inline-block;
+}
+
+.yandex-map-left-col-list-item .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 100%;
+}
+
+.yandex-map-left-col-list-item .dot-red {
+    background: red;
+}
+
+.yandex-map-left-col-list-item .dot-green {
+    background: green;
 }

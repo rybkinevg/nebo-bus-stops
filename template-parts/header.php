@@ -8,6 +8,11 @@ if (!defined('INSTALLED')) header('Location: /install/install.php');
 
 if (!isset($_COOKIE['auth'])) header('Location: /sign-in.php');
 
+if (isset($_GET['statuses'])) {
+
+    setcookie('statuses', $_GET['statuses'], time() + 60 * 60 * 24 * 30);
+}
+
 $page = get_page();
 
 $db = new db(HOST, USER, PASSWORD, DB_NAME);
