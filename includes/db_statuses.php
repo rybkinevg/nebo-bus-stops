@@ -63,7 +63,7 @@ if (isset($_FILES['upload-file']) && empty($_FILES['upload-file']['error'])) {
 
         $date = $_POST['year'] . '-' . $_POST['month'];
 
-        $file_path = $_SERVER['DOCUMENT_ROOT'] . '/files/statuses_imports/statuses_january_2021.xlsx';
+        $file_path = $uploadfile;
 
         if ($xlsx = SimpleXLSX::parse($file_path)) {
 
