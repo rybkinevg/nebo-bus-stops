@@ -208,4 +208,38 @@
             // });
         });
     };
+
+    // statuses delete month
+
+    const stDeleteMonthBtn = $('.js-db-delete-statuses-for-month');
+
+    stDeleteMonthBtn.on('click', function () {
+
+        $(this).text('Ожидайте...');
+
+        $.ajax({
+            url: './includes/db_statuses.php',
+            type: 'POST',
+            data: {
+                action: 'delete-statuses-for-month',
+                date: $(this).data('date')
+            },
+            success: function (respond, status, jqXHR) {
+                if (respond.success) {
+
+                    $(this).text('Удалить');
+
+                    location.reload();
+                } else {
+
+                    let message = respond.message ?? respond;
+
+                    console.log(message);
+                }
+            },
+            error: function (jqXHR, status, errorThrown) {
+                console.log('Ошибка AJAX запроса: ' + status);
+            }
+        });
+    });
 })(jQuery)
