@@ -55,10 +55,12 @@ function get_page()
 
 function enqueue_scripts($page)
 {
-    $scripts['jquery'] = get_path(true) . "/assets/js/jquery.min.js";
+    //$scripts['jquery'] = get_path(true) . "/assets/js/jquery.min.js";
+    $scripts['jquery'] = "https://code.jquery.com/jquery-3.5.1.min.js";
     $scripts['modernizr'] = get_path(true) . "/assets/js/modernizr.min.js";
     $scripts['popper'] = get_path(true) . "/assets/js/popper.min.js";
-    $scripts['bootstrap'] = get_path(true) . "/assets/js/bootstrap.min.js";
+    //$scripts['bootstrap'] = get_path(true) . "/assets/js/bootstrap.min.js";
+    $scripts['bootstrap'] = "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js";
     $scripts['metisMenu'] = get_path(true) . "/assets/js/metisMenu.min.js";
     $scripts['waves'] = get_path(true) . "/assets/js/waves.js";
     $scripts['slimscroll'] = get_path(true) . "/assets/js/jquery.slimscroll.js";
@@ -101,7 +103,9 @@ function enqueue_scripts($page)
 
 function enqueue_styles($page)
 {
-    $styles['bootstrap'] = get_path(true) . "/assets/css/bootstrap.min.css";
+    //$styles['bootstrap'] = get_path(true) . "/assets/css/bootstrap.min.css";
+    $styles['bootstrap'] = "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css";
+
     $styles['icons'] = get_path(true) . "/assets/css/icons.css";
     $styles['metismenu'] = get_path(true) . "/assets/css/metismenu.min.css";
 
