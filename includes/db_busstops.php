@@ -1,5 +1,8 @@
 <?php
 
+// Увеличенное время таймаута
+set_time_limit(2000);
+
 // Подключение необходимых библиотек, настроек и классов
 require_once($_SERVER['DOCUMENT_ROOT'] . '/config.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/db.php');
